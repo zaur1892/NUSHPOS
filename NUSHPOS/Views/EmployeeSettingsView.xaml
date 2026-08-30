@@ -1,0 +1,486 @@
+<UserControl x:Class="NUSHPOS.Views.EmployeeSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:NUSHPOS.Views"
+             xmlns:vm="clr-namespace:NUSHPOS.ViewModels"
+             xmlns:converters="clr-namespace:NUSHPOS.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="660" d:DesignWidth="760"
+             Background="White">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+        <!-- Label style -->
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#444"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+        </Style>
+
+        <!-- TextBox style -->
+        <Style x:Key="InputStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="26"/>
+            <Setter Property="Padding" Value="4,2"/>
+            <Setter Property="BorderBrush" Value="#aaa"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Tab button style -->
+        <Style x:Key="TabBtnStyle" TargetType="Button">
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="#e0e0e0"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#bbb"/>
+            <Setter Property="Padding" Value="12,0"/>
+        </Style>
+
+        <!-- Nav button style (arrows) -->
+        <Style x:Key="NavBtnStyle" TargetType="Button">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Background" Value="#dce8f5"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#aac"/>
+            <Setter Property="Foreground" Value="#234"/>
+            <Setter Property="Margin" Value="2,0"/>
+        </Style>
+
+        <!-- Action button -->
+        <Style x:Key="ActionBtnStyle" TargetType="Button">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,0"/>
+            <Setter Property="Margin" Value="4,0"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- Top nav tabs: AKTİV / KEÇMİŞ -->
+            <RowDefinition Height="36"/>
+            <!-- Main content: list + form -->
+            <RowDefinition Height="*"/>
+            <!-- Bottom nav + action buttons -->
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+
+        <!-- ════════════════════════════════════════════════════════════════
+             ROW 0 – Employee list tabs  
+             ════════════════════════════════════════════════════════════════ -->
+        <Border Grid.Row="0" Background="#f4f4f4" BorderBrush="#ccc" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0">
+                <Button Content="AKTİV İŞÇİLƏR"
+                        Command="{Binding ShowActiveEmployeesCommand}"
+                        Margin="2,0">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource TabBtnStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowActive}" Value="True">
+                                    <Setter Property="Background" Value="#3da7eb"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="BorderBrush" Value="#2e8cc7"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Content="KEÇMİŞ İŞÇİLƏR"
+                        Command="{Binding ShowFormerEmployeesCommand}"
+                        Margin="2,0">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource TabBtnStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowActive}" Value="False">
+                                    <Setter Property="Background" Value="#3da7eb"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="BorderBrush" Value="#2e8cc7"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </Border>
+
+        <!-- ════════════════════════════════════════════════════════════════
+             ROW 1 – Main area: employee list (left) + form (right)
+             ════════════════════════════════════════════════════════════════ -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <!-- Employee list -->
+                <ColumnDefinition Width="220"/>
+                <!-- Splitter -->
+                <ColumnDefinition Width="4"/>
+                <!-- Detail form -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ── Employee List ─────────────────────────────────────── -->
+            <Border Grid.Column="0" BorderBrush="#ccc" BorderThickness="0,0,1,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <!-- Column headers -->
+                        <RowDefinition Height="28"/>
+                        <!-- List -->
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Headers -->
+                    <Grid Grid.Row="0" Background="#e8e8e8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="ADI" FontWeight="Bold" FontSize="12"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="SOYADI" FontWeight="Bold" FontSize="12"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <!-- List -->
+                    <ListBox Grid.Row="1"
+                             ItemsSource="{Binding Employees}"
+                             SelectedItem="{Binding SelectedEmployee}"
+                             BorderThickness="0"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="2,1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding FirstName}"
+                                               FontSize="12" Padding="4,3"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding LastName}"
+                                               FontSize="12" Padding="4,3"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#c8dff5"/>
+                                        <Setter Property="Foreground" Value="#000"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#e8f2fc"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+
+                    <!-- Loading overlay -->
+                    <Border Grid.Row="0" Grid.RowSpan="2"
+                            Background="#88FFFFFF"
+                            Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock Text="Yüklənir..." FontSize="14" FontWeight="Bold"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Foreground="#3da7eb"/>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- Splitter -->
+            <GridSplitter Grid.Column="1" Width="4" HorizontalAlignment="Stretch"
+                          Background="#ddd" ResizeDirection="Columns"/>
+
+            <!-- ── Detail Form ────────────────────────────────────────── -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <!-- Form tabs: ÜMUMİ / DİGƏR / QEYDLƏR -->
+                    <RowDefinition Height="34"/>
+                    <!-- Tab content -->
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Form tab headers -->
+                <Border Grid.Row="0" Background="#f0f0f0" BorderBrush="#ccc" BorderThickness="0,0,0,1">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0">
+                        <RadioButton Content="ÜMUMİ" GroupName="DetailTab" FontWeight="Bold"
+                                     IsChecked="True" Margin="0,0,2,0">
+                            <RadioButton.Template>
+                                <ControlTemplate TargetType="RadioButton">
+                                    <Border x:Name="Brd" Background="#e0e0e0" BorderBrush="#bbb"
+                                            BorderThickness="1" Padding="12,4" Margin="1,0">
+                                        <ContentPresenter/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Brd" Property="Background" Value="White"/>
+                                            <Setter TargetName="Brd" Property="BorderBrush" Value="#3da7eb"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </RadioButton.Template>
+                        </RadioButton>
+                        <RadioButton Content="DİGƏR" GroupName="DetailTab" FontWeight="Bold" Margin="0,0,2,0">
+                            <RadioButton.Template>
+                                <ControlTemplate TargetType="RadioButton">
+                                    <Border x:Name="Brd" Background="#e0e0e0" BorderBrush="#bbb"
+                                            BorderThickness="1" Padding="12,4" Margin="1,0">
+                                        <ContentPresenter/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Brd" Property="Background" Value="White"/>
+                                            <Setter TargetName="Brd" Property="BorderBrush" Value="#3da7eb"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </RadioButton.Template>
+                        </RadioButton>
+                        <RadioButton Content="QEYDLƏR" GroupName="DetailTab" FontWeight="Bold" Margin="0,0,2,0">
+                            <RadioButton.Template>
+                                <ControlTemplate TargetType="RadioButton">
+                                    <Border x:Name="Brd" Background="#e0e0e0" BorderBrush="#bbb"
+                                            BorderThickness="1" Padding="12,4" Margin="1,0">
+                                        <ContentPresenter/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Brd" Property="Background" Value="White"/>
+                                            <Setter TargetName="Brd" Property="BorderBrush" Value="#3da7eb"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </RadioButton.Template>
+                        </RadioButton>
+                    </StackPanel>
+                </Border>
+
+                <!-- Scrollable Form Fields -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="16,10">
+                    <StackPanel>
+
+                        <!-- ═══ ÜMUMİ FIELDS ════════════════════════════ -->
+                        <!-- ADI -->
+                        <Grid Margin="0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ADI" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource InputStyle}"
+                                     Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+
+                        <!-- SOYADI -->
+                        <Grid Margin="0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="SOYADI" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource InputStyle}"
+                                     Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+
+                        <!-- VƏZİFƏ -->
+                        <Grid Margin="0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="60"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="VƏZİFƏ" Style="{StaticResource LabelStyle}"/>
+                            <ComboBox Grid.Column="1" Height="26" FontSize="13"
+                                      ItemsSource="{Binding Titles}"
+                                      SelectedItem="{Binding SelectedTitle}"
+                                      DisplayMemberPath="TitleName"
+                                      VerticalContentAlignment="Center"/>
+                            <Button Grid.Column="2" Content="Əlavə" Height="26"
+                                    FontSize="11" Background="#4caf50" Foreground="White"
+                                    BorderThickness="0" Margin="4,0,0,0"/>
+                        </Grid>
+
+                        <!-- İCAZƏ SƏVİYYƏSİ -->
+                        <Grid Margin="0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="İCAZƏ SƏVİYYƏSİ" Style="{StaticResource LabelStyle}" TextWrapping="Wrap"/>
+                            <ComboBox Grid.Column="1" Height="26" FontSize="13"
+                                      ItemsSource="{Binding SecurityLevels}"
+                                      SelectedItem="{Binding SelectedSecurityLevel}"
+                                      VerticalContentAlignment="Center"/>
+                        </Grid>
+
+                        <!-- PROQRAM DİLİ -->
+                        <Grid Margin="0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="PROQRAM DİLİ" Style="{StaticResource LabelStyle}" TextWrapping="Wrap"/>
+                            <ComboBox Grid.Column="1" Height="26" FontSize="13"
+                                      ItemsSource="{Binding Languages}"
+                                      SelectedItem="{Binding SelectedLanguage}"
+                                      VerticalContentAlignment="Center"/>
+                        </Grid>
+
+                        <Separator Margin="0,10"/>
+
+                        <!-- PIN / ŞİFRƏ -->
+                        <Grid Margin="0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="PIN / ŞİFRƏ" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource InputStyle}"
+                                     Text="{Binding AccessCode, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+
+                        <!-- KART KODU (Mifare) -->
+                        <Grid Margin="0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="KART KODU" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource InputStyle}"
+                                     Text="{Binding MifareCode, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+
+                        <!-- RFID KODU (Proximity / ScanCode) -->
+                        <Grid Margin="0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="RFID KODU" Style="{StaticResource LabelStyle}" TextWrapping="Wrap"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource InputStyle}"
+                                     Text="{Binding ScanCode, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+
+                        <Separator Margin="0,10"/>
+
+                        <!-- Checkboxes row -->
+                        <WrapPanel Margin="0,4">
+                            <CheckBox Content="PAKETÇİDİR" IsChecked="{Binding IsPackager}"
+                                      FontSize="12" Margin="0,0,20,6"/>
+                            <CheckBox Content="İŞÇİNİ DEAKTİV ET" IsChecked="{Binding IsHidden}"
+                                      FontSize="12" Margin="0,0,20,6"/>
+                        </WrapPanel>
+
+                        <Separator Margin="0,10"/>
+
+                        <!-- ═══ DİGƏR FIELDS ════════════════════════════ -->
+                        <TextBlock Text="DİGƏR MƏLUMATLAR" FontWeight="Bold" FontSize="13"
+                                   Foreground="#3da7eb" Margin="0,0,0,8"/>
+
+                        <!-- Telefon -->
+                        <Grid Margin="0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="TELEFON" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource InputStyle}"
+                                     Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+
+                        <!-- Aylıq Yemək Haqqı -->
+                        <Grid Margin="0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="AYLIQ YEMƏK HAQQI" Style="{StaticResource LabelStyle}" TextWrapping="Wrap"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource InputStyle}"
+                                     Text="{Binding MonthlyDinnerFee, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+
+                        <!-- Checkbox options -->
+                        <WrapPanel Margin="0,8">
+                            <CheckBox Content="Bank" IsChecked="{Binding UseStaffBank}"
+                                      FontSize="12" Margin="0,0,20,6"/>
+                            <CheckBox Content="Sürücü" IsChecked="{Binding IsDriver}"
+                                      FontSize="12" Margin="0,0,20,6"/>
+                            <CheckBox Content="Ofisiant" IsChecked="{Binding IsServer}"
+                                      FontSize="12" Margin="0,0,20,6"/>
+                            <CheckBox Content="Hostess" IsChecked="{Binding UseHostess}"
+                                      FontSize="12" Margin="0,0,20,6"/>
+                            <CheckBox Content="Kassa çıxışı yoxdur" IsChecked="{Binding NoCashierOut}"
+                                      FontSize="12" Margin="0,0,20,6"/>
+                        </WrapPanel>
+
+                        <Separator Margin="0,10"/>
+
+                        <!-- ═══ QEYDLƏR FIELDS ══════════════════════════ -->
+                        <TextBlock Text="QEYDLƏR" FontWeight="Bold" FontSize="13"
+                                   Foreground="#3da7eb" Margin="0,0,0,8"/>
+                        <TextBox Text="{Binding EmployeeNotes, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="100"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 BorderBrush="#aaa" BorderThickness="1"
+                                 FontSize="12" Padding="4"/>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <!-- ════════════════════════════════════════════════════════════════
+             ROW 2 – Navigation arrows + Action buttons
+             ════════════════════════════════════════════════════════════════ -->
+        <Border Grid.Row="2" Background="#f4f4f4" BorderBrush="#ccc" BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left: navigation arrows -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal"
+                            VerticalAlignment="Center" Margin="6,0">
+                    <Button Content="↑↑" Style="{StaticResource NavBtnStyle}"
+                            Command="{Binding MoveFirstCommand}" ToolTip="Birinci"/>
+                    <Button Content="↑" Style="{StaticResource NavBtnStyle}"
+                            Command="{Binding MoveUpCommand}" ToolTip="Əvvəlki"/>
+                    <Button Content="↓" Style="{StaticResource NavBtnStyle}"
+                            Command="{Binding MoveDownCommand}" ToolTip="Sonrakı"/>
+                    <Button Content="↓↓" Style="{StaticResource NavBtnStyle}"
+                            Command="{Binding MoveLastCommand}" ToolTip="Sonuncu"/>
+                </StackPanel>
+
+                <!-- Right: YENİ ƏLAVƏ + YADDA SAXLA + BAĞLA -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal"
+                            VerticalAlignment="Center" Margin="0,0,8,0">
+                    <Button Content="YENİ ƏLAVƏ"
+                            Style="{StaticResource ActionBtnStyle}"
+                            Background="#3da7eb" Foreground="White"
+                            Command="{Binding NewEmployeeCommand}"/>
+                    <Button Content="YADDA SAXLA"
+                            Style="{StaticResource ActionBtnStyle}"
+                            Background="#4caf50" Foreground="White"
+                            Command="{Binding SaveCommand}"/>
+                    <Button Content="BAĞLA"
+                            Style="{StaticResource ActionBtnStyle}"
+                            Background="#f03041" Foreground="White"
+                            Command="{Binding CloseCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

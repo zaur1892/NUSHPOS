@@ -1,0 +1,145 @@
+<UserControl x:Class="NUSHPOS.Views.OrderRecallView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NUSHPOS.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024"
+             Background="#00A2E8">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Top Bar -->
+        <Border Grid.Row="0" Grid.ColumnSpan="2" Background="White" Padding="5">
+            <TextBlock Text="SİPARİŞİ ÇAĞIR" FontWeight="Bold" FontSize="14" Foreground="#333"/>
+        </Border>
+
+        <!-- Left Side: List -->
+        <Grid Grid.Row="1" Grid.Column="0" Margin="10,10,5,5">
+            <DataGrid ItemsSource="{Binding Orders}" SelectedItem="{Binding SelectedOrder}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="Column" SelectionMode="Single" Background="White" RowHeight="50" FontSize="16">
+                <DataGrid.InputBindings>
+                    <MouseBinding Gesture="LeftDoubleClick" Command="{Binding OpenCheckCommand}" />
+                </DataGrid.InputBindings>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ÇEK NO" Binding="{Binding DisplayCheckNo}" Width="1.5*"/>
+                    <DataGridTextColumn Header="Tarix" Binding="{Binding OrderDateTime, StringFormat=dd-MM-yyyy HH:mm:ss}" Width="2*"/>
+                    <DataGridTextColumn Header="İŞÇİ" Binding="{Binding EmployeeName}" Width="2*"/>
+                    <DataGridTextColumn Header="MƏBLƏĞ" Binding="{Binding GrandTotal, StringFormat=N2}" Width="1.5*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="INFO" Binding="{Binding InfoText}" Width="2*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <!-- Right Side: Numpad & Actions -->
+        <Grid Grid.Row="1" Grid.Column="1" Margin="5,10,10,5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Text="{Binding SearchReceiptNo, UpdateSourceTrigger=PropertyChanged}" FontSize="24" Background="White" IsReadOnly="True" VerticalContentAlignment="Center" Padding="5,0"/>
+                <Button Grid.Column="1" Content="&#x2190;" FontSize="24" Background="#4095D9" Foreground="White" Command="{Binding DeleteLastCharCommand}"/>
+            </Grid>
+
+            <UniformGrid Grid.Row="1" Columns="3" Rows="4" Height="200" Margin="0,0,0,10">
+                <Button Content="7" FontSize="24" Background="#4095D9" Foreground="White" Command="{Binding NumpadCommand}" CommandParameter="7" Margin="1"/>
+                <Button Content="8" FontSize="24" Background="#4095D9" Foreground="White" Command="{Binding NumpadCommand}" CommandParameter="8" Margin="1"/>
+                <Button Content="9" FontSize="24" Background="#4095D9" Foreground="White" Command="{Binding NumpadCommand}" CommandParameter="9" Margin="1"/>
+                <Button Content="4" FontSize="24" Background="#4095D9" Foreground="White" Command="{Binding NumpadCommand}" CommandParameter="4" Margin="1"/>
+                <Button Content="5" FontSize="24" Background="#4095D9" Foreground="White" Command="{Binding NumpadCommand}" CommandParameter="5" Margin="1"/>
+                <Button Content="6" FontSize="24" Background="#4095D9" Foreground="White" Command="{Binding NumpadCommand}" CommandParameter="6" Margin="1"/>
+                <Button Content="1" FontSize="24" Background="#4095D9" Foreground="White" Command="{Binding NumpadCommand}" CommandParameter="1" Margin="1"/>
+                <Button Content="2" FontSize="24" Background="#4095D9" Foreground="White" Command="{Binding NumpadCommand}" CommandParameter="2" Margin="1"/>
+                <Button Content="3" FontSize="24" Background="#4095D9" Foreground="White" Command="{Binding NumpadCommand}" CommandParameter="3" Margin="1"/>
+                <Button Content="0" FontSize="24" Background="#4095D9" Foreground="White" Command="{Binding NumpadCommand}" CommandParameter="0" Margin="1"/>
+                <Border Grid.ColumnSpan="2" Background="#222" Margin="1">
+                    <TextBlock Text="AXTAR" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16"/>
+                </Border>
+            </UniformGrid>
+
+            <Button Grid.Row="2" Content="AXTAR" Height="40" Background="#222" Foreground="White" FontSize="24" Margin="0,0,0,10" Command="{Binding SearchCommand}"/>
+
+            <UniformGrid Grid.Row="3" Columns="2" Height="50" Margin="0,0,0,10">
+                <Button Content="ÇEK NO" Background="#00AA00" Foreground="White" FontSize="24" Margin="0,0,5,0"/>
+                <Button Content="FİŞ NO" Background="#DDD" Foreground="#888" FontSize="24" Margin="5,0,0,0"/>
+            </UniformGrid>
+
+            <Button Grid.Row="4" Content="ÇAP OLUNMAMIŞLAR" Height="40" Background="#7593DF" Foreground="White" FontSize="20" Margin="0,0,0,10" Command="{Binding LoadUnprintedChecksCommand}"/>
+
+            <Grid Grid.Row="5" Margin="0,0,0,10" Height="40">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="&#x25C0;" Width="40" Background="#EEE" Command="{Binding PreviousDayCommand}"/>
+                <DatePicker Grid.Column="1" SelectedDate="{Binding SelectedDate, Mode=TwoWay}" FontSize="18" VerticalContentAlignment="Center"/>
+                <Button Grid.Column="2" Content="&#x25B6;" Width="40" Background="#EEE" Command="{Binding NextDayCommand}"/>
+            </Grid>
+
+            <UniformGrid Grid.Row="6" Columns="2" Height="60" Margin="0,0,0,10">
+                <Button Content="AÇIQ ÇEKLƏR" Background="#A1CFE5" Foreground="#333" FontSize="20" Margin="0,0,5,0" Command="{Binding LoadOpenChecksCommand}"/>
+                <Button Content="BÜTÜN ÇEKLƏR" Background="#00AA00" Foreground="White" FontSize="20" Margin="5,0,0,0" Command="{Binding LoadAllChecksCommand}"/>
+            </UniformGrid>
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <Border Background="#64559C">
+                <TextBlock Text="{Binding TotalOrderCount, StringFormat=CƏMİ SİFARİŞ SAYI {0}}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" FontWeight="Bold"/>
+            </Border>
+
+            <Grid Grid.Row="1" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+
+                <UniformGrid Grid.Column="0" Columns="6" Height="50" Margin="0,0,10,0">
+                    <Button Content="HAMISI" Background="#00AA00" Foreground="White" FontSize="18" FontWeight="Bold" Margin="2" Command="{Binding SetOrderTypeFilterCommand}" CommandParameter="0"/>
+                    <Button Content="MASA" Background="#4095D9" Foreground="White" FontSize="18" Margin="2" Command="{Binding SetOrderTypeFilterCommand}" CommandParameter="1"/>
+                    <Button Content="ADA ÇEK" Background="#4095D9" Foreground="White" FontSize="18" Margin="2" Command="{Binding SetOrderTypeFilterCommand}" CommandParameter="2"/>
+                    <Button Content="AL GÖTÜR" Background="#4095D9" Foreground="White" FontSize="18" Margin="2" Command="{Binding SetOrderTypeFilterCommand}" CommandParameter="3"/>
+                    <Button Content="TƏZGAH SATIŞI" Background="#4095D9" Foreground="White" FontSize="18" Margin="2" Command="{Binding SetOrderTypeFilterCommand}" CommandParameter="4"/>
+                    <Button Content="PAKET" Background="#4095D9" Foreground="White" FontSize="18" Margin="2" Command="{Binding SetOrderTypeFilterCommand}" CommandParameter="5"/>
+                </UniformGrid>
+
+                <UniformGrid Grid.Column="1" Columns="2" Height="50">
+                    <Button Content="GERİ" Background="#E51400" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,0,5,0" Command="{Binding GoBackCommand}"/>
+                    <Button Content="MƏNİM ÇEKLƏRİM" Background="#4095D9" Foreground="White" FontSize="16" Margin="5,0,0,0" Command="{Binding LoadMyChecksCommand}"/>
+                </UniformGrid>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

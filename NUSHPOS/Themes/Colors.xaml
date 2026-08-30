@@ -1,0 +1,34 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Colors -->
+    <Color x:Key="PrimaryColor">#EBF5FB</Color> <!-- Very Light Blue -->
+    <Color x:Key="PrimaryDarkColor">#D4E6F1</Color>
+    <Color x:Key="SurfaceColor">#FFFFFF</Color> <!-- White panels for contrast -->
+    <Color x:Key="SurfaceLight">#F4F9F9</Color>
+    <Color x:Key="AccentColor">#154360</Color> <!-- Dark Blue -->
+    <Color x:Key="AccentHover">#1F618D</Color>
+    <Color x:Key="SuccessColor">#2ECC71</Color>
+    <Color x:Key="DangerColor">#E74C3C</Color>
+    <Color x:Key="WarningColor">#F39C12</Color>
+    <Color x:Key="TextPrimary">#1B2631</Color> <!-- Dark text for light background -->
+    <Color x:Key="TextSecondary">#5D6D7E</Color>
+    <Color x:Key="BorderColor">#AED6F1</Color>
+
+    <!-- Brushes -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
+    <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{StaticResource PrimaryDarkColor}"/>
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}"/>
+    <SolidColorBrush x:Key="SurfaceLightBrush" Color="{StaticResource SurfaceLight}"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHover}"/>
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimary}"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}"/>
+    <SolidColorBrush x:Key="PosBorderBrush" Color="{StaticResource BorderColor}"/>
+
+    <!-- Aliases for convenience -->
+    <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextPrimary}"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
+</ResourceDictionary>
