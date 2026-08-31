@@ -13,6 +13,9 @@
         <DataTemplate DataType="{x:Type viewmodels:CompanySettingsViewModel}">
             <local:CompanySettingsView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:TerminalSettingsViewModel}">
+            <local:TerminalSettingsView />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodels:EmployeeSettingsViewModel}">
             <local:EmployeeSettingsView />
         </DataTemplate>
@@ -40,26 +43,23 @@
                     <!-- Submenu Header for Active Category -->
                     <Border Background="#243450" Padding="12,8" Margin="0,0,0,5">
                         <Grid>
-                            <TextBlock Text="Menyu Sazlamaları" Foreground="#8ec3eb" FontWeight="Bold" FontSize="13"/>
+                            <TextBlock Text="Ümumi Sazlamalar" Foreground="#8ec3eb" FontWeight="Bold" FontSize="13"/>
                             <TextBlock Text="«" Foreground="#8ec3eb" HorizontalAlignment="Right" FontSize="14"/>
                         </Grid>
                     </Border>
 
-                    <!-- Sub-items for Menyu Sazlamaları -->
+                    <!-- Sub-items for Ümumi Sazlamalar -->
                     <StackPanel Background="#1b283d" Margin="0,0,0,10">
-                        <Button Content="🗂️  Menyu Ekran Qrupları" Command="{Binding OpenMenuScreenGroupsCommand}" Height="40" Background="Transparent" Foreground="#ccc" BorderThickness="0" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="12" Cursor="Hand"/>
-                        <Button Content="🍽️  Menyu Məhsulları" Command="{Binding OpenMenuDesignerCommand}" Height="40" Background="#2e4368" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontWeight="Bold" FontSize="12" Cursor="Hand"/>
-                        <Button Content="💬  Məhsul Mesaj Qrupları" Command="{Binding OpenModifierGroupsCommand}" Height="40" Background="Transparent" Foreground="#ccc" BorderThickness="0" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="12" Cursor="Hand"/>
-                        <Button Content="📑  Məhsul Mesajları" Command="{Binding OpenModifiersCommand}" Height="40" Background="Transparent" Foreground="#ccc" BorderThickness="0" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="12" Cursor="Hand"/>
-                        <Button Content="🍱  Kombo Menyular" Command="{Binding OpenComboMenusCommand}" Height="40" Background="Transparent" Foreground="#ccc" BorderThickness="0" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="12" Cursor="Hand"/>
+                        <Button Content="🏢  Müəssisə Sazlamaları" Command="{Binding OpenCompanySettingsCommand}" Height="40" Background="Transparent" Foreground="#ccc" BorderThickness="0" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="12" Cursor="Hand"/>
+                        <Button Content="💻  Terminal Sazlamaları" Command="{Binding OpenTerminalSettingsCommand}" Height="40" Background="#2e4368" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontWeight="Bold" FontSize="12" Cursor="Hand"/>
                     </StackPanel>
 
                     <!-- Main Category Buttons -->
                     <Border Height="1" Background="#2c3e5e" Margin="10,0,10,10"/>
-                    <Button Content="⚙️  Ümumi Sazlamalar" Command="{Binding OpenCompanySettingsCommand}" Height="44" Background="Transparent" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="16,0,0,0" Margin="0,1" FontSize="13" Cursor="Hand"/>
+                    <Button Content="⚙️  Ümumi Sazlamalar" Command="{Binding OpenCompanySettingsCommand}" Height="44" Background="#283a57" Foreground="#3da7eb" BorderThickness="0" HorizontalContentAlignment="Left" Padding="16,0,0,0" Margin="0,1" FontWeight="Bold" FontSize="13" Cursor="Hand"/>
+                    <Button Content="📋  Menyu Sazlamaları" Command="{Binding OpenMenuDesignerCommand}" Height="44" Background="Transparent" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="16,0,0,0" Margin="0,1" FontSize="13" Cursor="Hand"/>
                     <Button Content="👤  Əməkdaş Sazlamaları" Command="{Binding OpenEmployeeSettingsCommand}" Height="44" Background="Transparent" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="16,0,0,0" Margin="0,1" FontSize="13" Cursor="Hand"/>
                     <Button Content="🪑  Masa Sazlamaları" Command="{Binding OpenTableSettingsCommand}" Height="44" Background="Transparent" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="16,0,0,0" Margin="0,1" FontSize="13" Cursor="Hand"/>
-                    <Button Content="📋  Menyu Sazlamaları" Command="{Binding ToggleMenuSettingsCommand}" Height="44" Background="#283a57" Foreground="#3da7eb" BorderThickness="0" HorizontalContentAlignment="Left" Padding="16,0,0,0" Margin="0,1" FontWeight="Bold" FontSize="13" Cursor="Hand"/>
                     <Button Content="🏷️  % Endirim, Kampaniya, Ödəniş" Command="{Binding OpenDiscountSettingsCommand}" Height="44" Background="Transparent" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="16,0,0,0" Margin="0,1" FontSize="13" Cursor="Hand"/>
                     <Button Content="⚡  Əməliyyatlar" Command="{Binding OpenOperationsCommand}" Height="44" Background="Transparent" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="16,0,0,0" Margin="0,1" FontSize="13" Cursor="Hand"/>
                 </StackPanel>

@@ -162,6 +162,18 @@ public partial class BackOfficeViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private void OpenTerminalSettings()
+    {
+        ActiveSidebarSection = "GenelAyarlar";
+        var vm = App.Services.GetService(typeof(TerminalSettingsViewModel)) as TerminalSettingsViewModel;
+        if (vm != null)
+        {
+            vm.RequestClose += () => CurrentSubView = null;
+            CurrentSubView = vm;
+        }
+    }
+
+    [RelayCommand]
     private void OpenEmployeeSettings()
     {
         ActiveSidebarSection = "PersonelAyarlari";

@@ -47,6 +47,7 @@ public partial class App : Application
         services.AddTransient<DiscountService>();
         services.AddTransient<RegisterSessionService>();
         services.AddTransient<SettingsService>();
+        services.AddTransient<StationSettingsService>();
 
         // ViewModels
         services.AddTransient<LoginViewModel>();
@@ -61,6 +62,7 @@ public partial class App : Application
         services.AddTransient<CompanySettingsViewModel>();
         services.AddTransient<EmployeeSettingsViewModel>();
         services.AddTransient<MenuDesignerViewModel>();
+        services.AddTransient<TerminalSettingsViewModel>();
         services.AddSingleton<MainWindowViewModel>();
     }
 
