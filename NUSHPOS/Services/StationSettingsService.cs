@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
@@ -336,6 +336,25 @@ public class StationSettingsService
                 Kitchen5PrinterName = @Kitchen5PrinterName,
                 Kitchen5PrinterID = @Kitchen5PrinterID,
                 Kitchen5DesignPath = @Kitchen5DesignPath,
+                Kitchen6PrinterName = @Kitchen6PrinterName,
+                Kitchen6PrinterID = @Kitchen6PrinterID,
+                Kitchen6DesignPath = @Kitchen6DesignPath,
+                Kitchen7PrinterName = @Kitchen7PrinterName,
+                Kitchen7PrinterID = @Kitchen7PrinterID,
+                Kitchen7DesignPath = @Kitchen7DesignPath,
+                Kitchen8PrinterName = @Kitchen8PrinterName,
+                Kitchen8PrinterID = @Kitchen8PrinterID,
+                Kitchen8DesignPath = @Kitchen8DesignPath,
+                Kitchen9PrinterName = @Kitchen9PrinterName,
+                Kitchen9PrinterID = @Kitchen9PrinterID,
+                Kitchen9DesignPath = @Kitchen9DesignPath,
+                Kitchen10PrinterName = @Kitchen10PrinterName,
+                Kitchen10PrinterID = @Kitchen10PrinterID,
+                Kitchen10DesignPath = @Kitchen10DesignPath,
+                InvoiceRowCount = @InvoiceRowCount,
+                InvoiceTopFeed = @InvoiceTopFeed,
+                AdditionRowCount = @AdditionRowCount,
+                AdditionTopFeed = @AdditionTopFeed,
                 PrintDineInOrdersKitchen = @PrintDineInOrdersKitchen,
                 PrintBarTableOrdersKitchen = @PrintBarTableOrdersKitchen,
                 PrintTakeOutOrdersKitchen = @PrintTakeOutOrdersKitchen,

@@ -86,6 +86,46 @@ public class StationPrinterSettings
     public int? Kitchen10PrinterID { get; set; }
     public string? Kitchen10DesignPath { get; set; }
 
+    public string? Kitchen11PrinterName { get; set; }
+    public int? Kitchen11PrinterID { get; set; }
+    public string? Kitchen11DesignPath { get; set; }
+
+    public string? Kitchen12PrinterName { get; set; }
+    public int? Kitchen12PrinterID { get; set; }
+    public string? Kitchen12DesignPath { get; set; }
+
+    public string? Kitchen13PrinterName { get; set; }
+    public int? Kitchen13PrinterID { get; set; }
+    public string? Kitchen13DesignPath { get; set; }
+
+    public string? Kitchen14PrinterName { get; set; }
+    public int? Kitchen14PrinterID { get; set; }
+    public string? Kitchen14DesignPath { get; set; }
+
+    public string? Kitchen15PrinterName { get; set; }
+    public int? Kitchen15PrinterID { get; set; }
+    public string? Kitchen15DesignPath { get; set; }
+
+    public string? Kitchen16PrinterName { get; set; }
+    public int? Kitchen16PrinterID { get; set; }
+    public string? Kitchen16DesignPath { get; set; }
+
+    public string? Kitchen17PrinterName { get; set; }
+    public int? Kitchen17PrinterID { get; set; }
+    public string? Kitchen17DesignPath { get; set; }
+
+    public string? Kitchen18PrinterName { get; set; }
+    public int? Kitchen18PrinterID { get; set; }
+    public string? Kitchen18DesignPath { get; set; }
+
+    public string? Kitchen19PrinterName { get; set; }
+    public int? Kitchen19PrinterID { get; set; }
+    public string? Kitchen19DesignPath { get; set; }
+
+    public string? Kitchen20PrinterName { get; set; }
+    public int? Kitchen20PrinterID { get; set; }
+    public string? Kitchen20DesignPath { get; set; }
+
     public int? InvoiceTopFeed { get; set; }
     public int? AdditionTopFeed { get; set; }
     public bool PrintDineInOrdersKitchen { get; set; } = true;
@@ -101,4 +141,5 @@ public class StationPrinterSettings
     public int? ReturnPrinterID { get; set; }
     public string? ReturnPrinterName { get; set; }
     public string? ReturnDesignPath { get; set; }
+    public string? DeliveryAltDesignPath { get; set; }
 }

@@ -35,6 +35,12 @@ public partial class TerminalSettingsViewModel : ViewModelBase
     private ObservableCollection<PrinterDesign> _printerDesigns = new();
 
     [ObservableProperty]
+    private ObservableCollection<KitchenPrinterSlot> _kitchenSlotsPage1 = new();
+
+    [ObservableProperty]
+    private ObservableCollection<KitchenPrinterSlot> _kitchenSlotsPage2 = new();
+
+    [ObservableProperty]
     private ObservableCollection<string> _loginEntrances = new()
     {
         "MASA SATIŞI",
@@ -129,6 +135,8 @@ public partial class TerminalSettingsViewModel : ViewModelBase
 
             var designs = await _settingsService.GetPrinterDesignsAsync();
             PrinterDesigns = new ObservableCollection<PrinterDesign>(designs);
+
+            PopulateKitchenSlots();
         }
         catch (Exception ex)
         {
@@ -138,6 +146,47 @@ public partial class TerminalSettingsViewModel : ViewModelBase
         {
             IsLoading = false;
         }
+    }
+
+    private void PopulateKitchenSlots()
+    {
+        string[] defaultNames = new[]
+        {
+            "ABİYER", "ET-TESİR", "CAG-KEBAP", "SALATA", "ARASICAK", 
+            "MEZE", "BAR", "TATLI", "SARKUTERİ", "USTKATMUTFAK",
+            "MƏTBƏX 11", "MƏTBƏX 12", "MƏTBƏX 13", "MƏTBƏX 14", "MƏTBƏX 15",
+            "MƏTBƏX 16", "MƏTBƏX 17", "MƏTBƏX 18", "MƏTBƏX 19", "MƏTBƏX 20"
+        };
+
+        KitchenSlotsPage1.Clear();
+        KitchenSlotsPage1.Add(new KitchenPrinterSlot { SlotNo = 1, SlotName = defaultNames[0], PrinterID = PrinterSettings.Kitchen1PrinterID, DesignPath = PrinterSettings.Kitchen1DesignPath });
+        KitchenSlotsPage1.Add(new KitchenPrinterSlot { SlotNo = 2, SlotName = defaultNames[1], PrinterID = PrinterSettings.Kitchen2PrinterID, DesignPath = PrinterSettings.Kitchen2DesignPath });
+        KitchenSlotsPage1.Add(new KitchenPrinterSlot { SlotNo = 3, SlotName = defaultNames[2], PrinterID = PrinterSettings.Kitchen3PrinterID, DesignPath = PrinterSettings.Kitchen3DesignPath });
+        KitchenSlotsPage1.Add(new KitchenPrinterSlot { SlotNo = 4, SlotName = defaultNames[3], PrinterID = PrinterSettings.Kitchen4PrinterID, DesignPath = PrinterSettings.Kitchen4DesignPath });
+        KitchenSlotsPage1.Add(new KitchenPrinterSlot { SlotNo = 5, SlotName = defaultNames[4], PrinterID = PrinterSettings.Kitchen5PrinterID, DesignPath = PrinterSettings.Kitchen5DesignPath });
+        KitchenSlotsPage1.Add(new KitchenPrinterSlot { SlotNo = 6, SlotName = defaultNames[5], PrinterID = PrinterSettings.Kitchen6PrinterID, DesignPath = PrinterSettings.Kitchen6DesignPath });
+        KitchenSlotsPage1.Add(new KitchenPrinterSlot { SlotNo = 7, SlotName = defaultNames[6], PrinterID = PrinterSettings.Kitchen7PrinterID, DesignPath = PrinterSettings.Kitchen7DesignPath });
+        KitchenSlotsPage1.Add(new KitchenPrinterSlot { SlotNo = 8, SlotName = defaultNames[7], PrinterID = PrinterSettings.Kitchen8PrinterID, DesignPath = PrinterSettings.Kitchen8DesignPath });
+        KitchenSlotsPage1.Add(new KitchenPrinterSlot { SlotNo = 9, SlotName = defaultNames[8], PrinterID = PrinterSettings.Kitchen9PrinterID, DesignPath = PrinterSettings.Kitchen9DesignPath });
+        KitchenSlotsPage1.Add(new KitchenPrinterSlot { SlotNo = 10, SlotName = defaultNames[9], PrinterID = PrinterSettings.Kitchen10PrinterID, DesignPath = PrinterSettings.Kitchen10DesignPath });
+
+        KitchenSlotsPage2.Clear();
+        KitchenSlotsPage2.Add(new KitchenPrinterSlot { SlotNo = 11, SlotName = defaultNames[10], PrinterID = PrinterSettings.Kitchen11PrinterID, DesignPath = PrinterSettings.Kitchen11DesignPath });
+        KitchenSlotsPage2.Add(new KitchenPrinterSlot { SlotNo = 12, SlotName = defaultNames[11], PrinterID = PrinterSettings.Kitchen12PrinterID, DesignPath = PrinterSettings.Kitchen12DesignPath });
+        KitchenSlotsPage2.Add(new KitchenPrinterSlot { SlotNo = 13, SlotName = defaultNames[12], PrinterID = PrinterSettings.Kitchen13PrinterID, DesignPath = PrinterSettings.Kitchen13DesignPath });
+        KitchenSlotsPage2.Add(new KitchenPrinterSlot { SlotNo = 14, SlotName = defaultNames[13], PrinterID = PrinterSettings.Kitchen14PrinterID, DesignPath = PrinterSettings.Kitchen14DesignPath });
+        KitchenSlotsPage2.Add(new KitchenPrinterSlot { SlotNo = 15, SlotName = defaultNames[14], PrinterID = PrinterSettings.Kitchen15PrinterID, DesignPath = PrinterSettings.Kitchen15DesignPath });
+        KitchenSlotsPage2.Add(new KitchenPrinterSlot { SlotNo = 16, SlotName = defaultNames[15], PrinterID = PrinterSettings.Kitchen16PrinterID, DesignPath = PrinterSettings.Kitchen16DesignPath });
+        KitchenSlotsPage2.Add(new KitchenPrinterSlot { SlotNo = 17, SlotName = defaultNames[16], PrinterID = PrinterSettings.Kitchen17PrinterID, DesignPath = PrinterSettings.Kitchen17DesignPath });
+        KitchenSlotsPage2.Add(new KitchenPrinterSlot { SlotNo = 18, SlotName = defaultNames[17], PrinterID = PrinterSettings.Kitchen18PrinterID, DesignPath = PrinterSettings.Kitchen18DesignPath });
+        KitchenSlotsPage2.Add(new KitchenPrinterSlot { SlotNo = 19, SlotName = defaultNames[18], PrinterID = PrinterSettings.Kitchen19PrinterID, DesignPath = PrinterSettings.Kitchen19DesignPath });
+        KitchenSlotsPage2.Add(new KitchenPrinterSlot { SlotNo = 20, SlotName = defaultNames[19], PrinterID = PrinterSettings.Kitchen20PrinterID, DesignPath = PrinterSettings.Kitchen20DesignPath });
+    }
+
+    [RelayCommand]
+    private void DesignReceipt()
+    {
+        MessageBox.Show("Qəbz Dizayn Redaktoru açılır...", "Dizayn Et", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     [RelayCommand]
@@ -209,6 +258,54 @@ public partial class TerminalSettingsViewModel : ViewModelBase
     {
         try
         {
+            if (KitchenSlotsPage1.Count >= 10)
+            {
+                PrinterSettings.Kitchen1PrinterID = KitchenSlotsPage1[0].PrinterID;
+                PrinterSettings.Kitchen1DesignPath = KitchenSlotsPage1[0].DesignPath;
+                PrinterSettings.Kitchen2PrinterID = KitchenSlotsPage1[1].PrinterID;
+                PrinterSettings.Kitchen2DesignPath = KitchenSlotsPage1[1].DesignPath;
+                PrinterSettings.Kitchen3PrinterID = KitchenSlotsPage1[2].PrinterID;
+                PrinterSettings.Kitchen3DesignPath = KitchenSlotsPage1[2].DesignPath;
+                PrinterSettings.Kitchen4PrinterID = KitchenSlotsPage1[3].PrinterID;
+                PrinterSettings.Kitchen4DesignPath = KitchenSlotsPage1[3].DesignPath;
+                PrinterSettings.Kitchen5PrinterID = KitchenSlotsPage1[4].PrinterID;
+                PrinterSettings.Kitchen5DesignPath = KitchenSlotsPage1[4].DesignPath;
+                PrinterSettings.Kitchen6PrinterID = KitchenSlotsPage1[5].PrinterID;
+                PrinterSettings.Kitchen6DesignPath = KitchenSlotsPage1[5].DesignPath;
+                PrinterSettings.Kitchen7PrinterID = KitchenSlotsPage1[6].PrinterID;
+                PrinterSettings.Kitchen7DesignPath = KitchenSlotsPage1[6].DesignPath;
+                PrinterSettings.Kitchen8PrinterID = KitchenSlotsPage1[7].PrinterID;
+                PrinterSettings.Kitchen8DesignPath = KitchenSlotsPage1[7].DesignPath;
+                PrinterSettings.Kitchen9PrinterID = KitchenSlotsPage1[8].PrinterID;
+                PrinterSettings.Kitchen9DesignPath = KitchenSlotsPage1[8].DesignPath;
+                PrinterSettings.Kitchen10PrinterID = KitchenSlotsPage1[9].PrinterID;
+                PrinterSettings.Kitchen10DesignPath = KitchenSlotsPage1[9].DesignPath;
+            }
+
+            if (KitchenSlotsPage2.Count >= 10)
+            {
+                PrinterSettings.Kitchen11PrinterID = KitchenSlotsPage2[0].PrinterID;
+                PrinterSettings.Kitchen11DesignPath = KitchenSlotsPage2[0].DesignPath;
+                PrinterSettings.Kitchen12PrinterID = KitchenSlotsPage2[1].PrinterID;
+                PrinterSettings.Kitchen12DesignPath = KitchenSlotsPage2[1].DesignPath;
+                PrinterSettings.Kitchen13PrinterID = KitchenSlotsPage2[2].PrinterID;
+                PrinterSettings.Kitchen13DesignPath = KitchenSlotsPage2[2].DesignPath;
+                PrinterSettings.Kitchen14PrinterID = KitchenSlotsPage2[3].PrinterID;
+                PrinterSettings.Kitchen14DesignPath = KitchenSlotsPage2[3].DesignPath;
+                PrinterSettings.Kitchen15PrinterID = KitchenSlotsPage2[4].PrinterID;
+                PrinterSettings.Kitchen15DesignPath = KitchenSlotsPage2[4].DesignPath;
+                PrinterSettings.Kitchen16PrinterID = KitchenSlotsPage2[5].PrinterID;
+                PrinterSettings.Kitchen16DesignPath = KitchenSlotsPage2[5].DesignPath;
+                PrinterSettings.Kitchen17PrinterID = KitchenSlotsPage2[6].PrinterID;
+                PrinterSettings.Kitchen17DesignPath = KitchenSlotsPage2[6].DesignPath;
+                PrinterSettings.Kitchen18PrinterID = KitchenSlotsPage2[7].PrinterID;
+                PrinterSettings.Kitchen18DesignPath = KitchenSlotsPage2[7].DesignPath;
+                PrinterSettings.Kitchen19PrinterID = KitchenSlotsPage2[8].PrinterID;
+                PrinterSettings.Kitchen19DesignPath = KitchenSlotsPage2[8].DesignPath;
+                PrinterSettings.Kitchen20PrinterID = KitchenSlotsPage2[9].PrinterID;
+                PrinterSettings.Kitchen20DesignPath = KitchenSlotsPage2[9].DesignPath;
+            }
+
             await _settingsService.UpdateStationSettingsAsync(Station);
             await _settingsService.UpdateStationPrinterSettingsAsync(PrinterSettings);
 
@@ -226,4 +323,12 @@ public partial class TerminalSettingsViewModel : ViewModelBase
     {
         RequestClose?.Invoke();
     }
+}
+
+public class KitchenPrinterSlot : ObservableObject
+{
+    public int SlotNo { get; set; }
+    public string SlotName { get; set; } = string.Empty;
+    public int? PrinterID { get; set; }
+    public string? DesignPath { get; set; }
 }

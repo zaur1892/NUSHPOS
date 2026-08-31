@@ -257,94 +257,400 @@
 
             <!-- TAB 4: ÇAP QURĞULARI -->
             <TabItem Header="ÇAP QURĞULARI" FontWeight="Bold" FontSize="12">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
-                    <StackPanel MaxWidth="850" HorizontalAlignment="Left">
-                        
-                        <Grid Margin="0,4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="220"/>
-                                <ColumnDefinition Width="300"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="QƏBZ PRİNTERİ" Style="{StaticResource SettingLabel}"/>
-                            <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}"
-                                      ItemsSource="{Binding Printers}"
-                                      SelectedValuePath="PrinterID"
-                                      SelectedValue="{Binding PrinterSettings.CheckPrinterID}"
-                                      DisplayMemberPath="PrinterName"/>
-                        </Grid>
+                <TabControl Background="White" BorderBrush="#cbd5e1" BorderThickness="0,1,0,0">
+                    
+                    <!-- SUB-TAB 1: ÜMUMİ PRİNTERLƏR -->
+                    <TabItem Header="ÜMUMİ PRİNTERLƏR" FontWeight="SemiBold" FontSize="11">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
+                            <StackPanel MaxWidth="880" HorizontalAlignment="Left">
+                                <!-- Column Headers -->
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="1" Text="—— PRİNTER ADI ——" FontSize="11" FontWeight="Bold" Foreground="#475569" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="—— DİZAYN ADI ——" FontSize="11" FontWeight="Bold" Foreground="#475569" HorizontalAlignment="Center"/>
+                                </Grid>
 
-                        <Grid Margin="0,4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="220"/>
-                                <ColumnDefinition Width="300"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="ÇATDIRILMA PRİNTERİ" Style="{StaticResource SettingLabel}"/>
-                            <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}"
-                                      ItemsSource="{Binding Printers}"
-                                      SelectedValuePath="PrinterID"
-                                      SelectedValue="{Binding PrinterSettings.DeliveryPrinterID}"
-                                      DisplayMemberPath="PrinterName"/>
-                        </Grid>
+                                <!-- HESAB PRİNTERİ -->
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="HESAB PRİNTERİ" Style="{StaticResource SettingLabel}"/>
+                                    <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding Printers}"
+                                              SelectedValuePath="PrinterID"
+                                              SelectedValue="{Binding PrinterSettings.CheckPrinterID}"
+                                              DisplayMemberPath="PrinterName"/>
+                                    <ComboBox Grid.Column="2" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding PrinterDesigns}"
+                                              SelectedValuePath="DesignName"
+                                              SelectedValue="{Binding PrinterSettings.CheckDesignPath}"
+                                              DisplayMemberPath="DesignName"
+                                              IsEditable="True"/>
+                                    <Button Grid.Column="3" Content="DİZAYN ET" Command="{Binding DesignReceiptCommand}" Style="{StaticResource SmallActionBtn}" Width="90" Background="#bae6fd" Foreground="#0369a1" FontWeight="Bold"/>
+                                </Grid>
 
-                        <Grid Margin="0,4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="220"/>
-                                <ColumnDefinition Width="300"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="FAKTURA PRİNTERİ" Style="{StaticResource SettingLabel}"/>
-                            <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}"
-                                      ItemsSource="{Binding Printers}"
-                                      SelectedValuePath="PrinterID"
-                                      SelectedValue="{Binding PrinterSettings.InvoicePrinterID}"
-                                      DisplayMemberPath="PrinterName"/>
-                        </Grid>
+                                <!-- PAKET PRİNTERİ -->
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="PAKET PRİNTERİ" Style="{StaticResource SettingLabel}"/>
+                                    <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding Printers}"
+                                              SelectedValuePath="PrinterID"
+                                              SelectedValue="{Binding PrinterSettings.DeliveryPrinterID}"
+                                              DisplayMemberPath="PrinterName"/>
+                                    <ComboBox Grid.Column="2" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding PrinterDesigns}"
+                                              SelectedValuePath="DesignName"
+                                              SelectedValue="{Binding PrinterSettings.DeliveryDesignPath}"
+                                              DisplayMemberPath="DesignName"
+                                              IsEditable="True"/>
+                                </Grid>
 
-                        <Grid Margin="0,4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="220"/>
-                                <ColumnDefinition Width="300"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="HESABAT PRİNTERİ" Style="{StaticResource SettingLabel}"/>
-                            <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}"
-                                      ItemsSource="{Binding Printers}"
-                                      SelectedValuePath="PrinterID"
-                                      SelectedValue="{Binding PrinterSettings.ReportPrinterID}"
-                                      DisplayMemberPath="PrinterName"/>
-                        </Grid>
+                                <!-- 2. PAKET PRİNTERİ -->
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="2. PAKET PRİNTERİ" Style="{StaticResource SettingLabel}"/>
+                                    <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding Printers}"
+                                              SelectedValuePath="PrinterName"
+                                              SelectedValue="{Binding PrinterSettings.DeliveryAltPrinterName}"
+                                              DisplayMemberPath="PrinterName"/>
+                                    <ComboBox Grid.Column="2" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding PrinterDesigns}"
+                                              SelectedValuePath="DesignName"
+                                              SelectedValue="{Binding PrinterSettings.DeliveryAltDesignPath}"
+                                              DisplayMemberPath="DesignName"
+                                              IsEditable="True"/>
+                                </Grid>
 
-                        <Grid Margin="0,4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="220"/>
-                                <ColumnDefinition Width="300"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="MƏTBƏX 1 PRİNTERİ" Style="{StaticResource SettingLabel}"/>
-                            <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}"
-                                      ItemsSource="{Binding Printers}"
-                                      SelectedValuePath="PrinterID"
-                                      SelectedValue="{Binding PrinterSettings.Kitchen1PrinterID}"
-                                      DisplayMemberPath="PrinterName"/>
-                        </Grid>
+                                <!-- RAPOR (POS PRİNTERİ) -->
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="HESABAT ( POS PRİNTERİ )" Style="{StaticResource SettingLabel}"/>
+                                    <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding Printers}"
+                                              SelectedValuePath="PrinterID"
+                                              SelectedValue="{Binding PrinterSettings.ReportPrinterID}"
+                                              DisplayMemberPath="PrinterName"/>
+                                    <ComboBox Grid.Column="2" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding PrinterDesigns}"
+                                              SelectedValuePath="DesignName"
+                                              SelectedValue="{Binding PrinterSettings.ReportDesignPath}"
+                                              DisplayMemberPath="DesignName"
+                                              IsEditable="True"/>
+                                </Grid>
 
-                        <Grid Margin="0,4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="220"/>
-                                <ColumnDefinition Width="300"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="MƏTBƏX 2 PRİNTERİ" Style="{StaticResource SettingLabel}"/>
-                            <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}"
-                                      ItemsSource="{Binding Printers}"
-                                      SelectedValuePath="PrinterID"
-                                      SelectedValue="{Binding PrinterSettings.Kitchen2PrinterID}"
-                                      DisplayMemberPath="PrinterName"/>
-                        </Grid>
+                                <!-- RAPOR (A4 PRİNTERİ) -->
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="HESABAT ( A4 PRİNTERİ )" Style="{StaticResource SettingLabel}"/>
+                                    <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding Printers}"
+                                              SelectedValuePath="PrinterID"
+                                              SelectedValue="{Binding PrinterSettings.ReportA4PrinterID}"
+                                              DisplayMemberPath="PrinterName"/>
+                                    <ComboBox Grid.Column="2" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding PrinterDesigns}"
+                                              SelectedValuePath="DesignName"
+                                              SelectedValue="{Binding PrinterSettings.ReportA4DesignPath}"
+                                              DisplayMemberPath="DesignName"
+                                              IsEditable="True"/>
+                                </Grid>
 
-                        <Border Height="1" Background="#e2e8f0" Margin="0,10"/>
-                        <TextBlock Text="MƏTBƏXƏ SİFARİŞ ÇAP QAYDALARI" FontWeight="Bold" Foreground="#1e2c43" FontSize="13" Margin="0,0,0,8"/>
-                        <CheckBox Content="Masada verilən sifarişləri mətbəxə çap et" IsChecked="{Binding PrinterSettings.PrintDineInOrdersKitchen}" Style="{StaticResource SettingCheckBox}"/>
-                        <CheckBox Content="Paket sifarişləri mətbəxə çap et" IsChecked="{Binding PrinterSettings.PrintTakeOutOrdersKitchen}" Style="{StaticResource SettingCheckBox}"/>
-                        <CheckBox Content="Çatdırılma sifarişlərini mətbəxə çap et" IsChecked="{Binding PrinterSettings.PrintDeliveryOrdersKitchen}" Style="{StaticResource SettingCheckBox}"/>
-                    </StackPanel>
-                </ScrollViewer>
+                                <!-- ETİKET PRİNTERİ -->
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="ETİKET PRİNTERİ" Style="{StaticResource SettingLabel}"/>
+                                    <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding Printers}"
+                                              SelectedValuePath="PrinterID"
+                                              SelectedValue="{Binding PrinterSettings.LabelPrinterID}"
+                                              DisplayMemberPath="PrinterName"/>
+                                    <ComboBox Grid.Column="2" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding PrinterDesigns}"
+                                              SelectedValuePath="DesignName"
+                                              SelectedValue="{Binding PrinterSettings.LabelDesignPath}"
+                                              DisplayMemberPath="DesignName"
+                                              IsEditable="True"/>
+                                </Grid>
+
+                                <!-- XƏRC QƏBZİ (İADƏ) PRİNTERİ -->
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="XƏRC QƏBZİ (İADƏ) PRİNTERİ" Style="{StaticResource SettingLabel}"/>
+                                    <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding Printers}"
+                                              SelectedValuePath="PrinterID"
+                                              SelectedValue="{Binding PrinterSettings.ReturnPrinterID}"
+                                              DisplayMemberPath="PrinterName"/>
+                                    <ComboBox Grid.Column="2" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding PrinterDesigns}"
+                                              SelectedValuePath="DesignName"
+                                              SelectedValue="{Binding PrinterSettings.ReturnDesignPath}"
+                                              DisplayMemberPath="DesignName"
+                                              IsEditable="True"/>
+                                </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <!-- SUB-TAB 2: MƏTBƏX / BAR -->
+                    <TabItem Header="MƏTBƏX / BAR" FontWeight="SemiBold" FontSize="11">
+                        <Grid Margin="12">
+                            <TabControl Background="White" BorderBrush="#cbd5e1" BorderThickness="1">
+                                <!-- SƏHİFƏ 1 (1-10) -->
+                                <TabItem Header="SƏHİFƏ 1" FontWeight="Bold" FontSize="11">
+                                    <DataGrid ItemsSource="{Binding KitchenSlotsPage1}"
+                                              AutoGenerateColumns="False"
+                                              CanUserAddRows="False"
+                                              CanUserDeleteRows="False"
+                                              GridLinesVisibility="All"
+                                              HorizontalGridLinesBrush="#e2e8f0"
+                                              VerticalGridLinesBrush="#e2e8f0"
+                                              HeadersVisibility="Column"
+                                              RowHeight="30"
+                                              FontSize="12"
+                                              BorderThickness="0"
+                                              Background="White">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="NO" Binding="{Binding SlotNo}" Width="50" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="SAZLAMA ADI" Binding="{Binding SlotName}" Width="160"/>
+                                            <DataGridTemplateColumn Header="PRİNTER ADI" Width="220">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <ComboBox ItemsSource="{Binding DataContext.Printers, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                  SelectedValuePath="PrinterID"
+                                                                  SelectedValue="{Binding PrinterID, UpdateSourceTrigger=PropertyChanged}"
+                                                                  DisplayMemberPath="PrinterName"
+                                                                  Height="26"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTemplateColumn Header="DİZAYN" Width="*">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <ComboBox ItemsSource="{Binding DataContext.PrinterDesigns, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                  SelectedValuePath="DesignName"
+                                                                  SelectedValue="{Binding DesignPath, UpdateSourceTrigger=PropertyChanged}"
+                                                                  DisplayMemberPath="DesignName"
+                                                                  IsEditable="True"
+                                                                  Height="26"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </TabItem>
+
+                                <!-- SƏHİFƏ 2 (11-20) -->
+                                <TabItem Header="SƏHİFƏ 2" FontWeight="Bold" FontSize="11">
+                                    <DataGrid ItemsSource="{Binding KitchenSlotsPage2}"
+                                              AutoGenerateColumns="False"
+                                              CanUserAddRows="False"
+                                              CanUserDeleteRows="False"
+                                              GridLinesVisibility="All"
+                                              HorizontalGridLinesBrush="#e2e8f0"
+                                              VerticalGridLinesBrush="#e2e8f0"
+                                              HeadersVisibility="Column"
+                                              RowHeight="30"
+                                              FontSize="12"
+                                              BorderThickness="0"
+                                              Background="White">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="NO" Binding="{Binding SlotNo}" Width="50" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="SAZLAMA ADI" Binding="{Binding SlotName}" Width="160"/>
+                                            <DataGridTemplateColumn Header="PRİNTER ADI" Width="220">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <ComboBox ItemsSource="{Binding DataContext.Printers, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                  SelectedValuePath="PrinterID"
+                                                                  SelectedValue="{Binding PrinterID, UpdateSourceTrigger=PropertyChanged}"
+                                                                  DisplayMemberPath="PrinterName"
+                                                                  Height="26"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTemplateColumn Header="DİZAYN" Width="*">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <ComboBox ItemsSource="{Binding DataContext.PrinterDesigns, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                  SelectedValuePath="DesignName"
+                                                                  SelectedValue="{Binding DesignPath, UpdateSourceTrigger=PropertyChanged}"
+                                                                  DisplayMemberPath="DesignName"
+                                                                  IsEditable="True"
+                                                                  Height="26"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </TabItem>
+                            </TabControl>
+                        </Grid>
+                    </TabItem>
+
+                    <!-- SUB-TAB 3: SİFARİŞ / QƏBZ PRİNTERİ -->
+                    <TabItem Header="SİFARİŞ / QƏBZ PRİNTERİ" FontWeight="SemiBold" FontSize="11">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
+                            <StackPanel MaxWidth="880" HorizontalAlignment="Left">
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="1" Text="—— PRİNTER ADI ——" FontSize="11" FontWeight="Bold" Foreground="#475569" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="—— DİZAYN ADI ——" FontSize="11" FontWeight="Bold" Foreground="#475569" HorizontalAlignment="Center"/>
+                                </Grid>
+
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="SİFARİŞ / QƏBZ PRİNTERİ" Style="{StaticResource SettingLabel}"/>
+                                    <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding Printers}"
+                                              SelectedValuePath="PrinterID"
+                                              SelectedValue="{Binding PrinterSettings.AdditionPrinterID}"
+                                              DisplayMemberPath="PrinterName"/>
+                                    <ComboBox Grid.Column="2" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding PrinterDesigns}"
+                                              SelectedValuePath="DesignName"
+                                              SelectedValue="{Binding PrinterSettings.AdditionDesignPath}"
+                                              DisplayMemberPath="DesignName"
+                                              IsEditable="True"/>
+                                </Grid>
+
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="ÜST BOŞLUQ SƏTİR SAYI" Style="{StaticResource SettingLabel}"/>
+                                    <TextBox Grid.Column="1" Style="{StaticResource SettingInput}" Text="{Binding PrinterSettings.AdditionTopFeed, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Grid>
+
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="SƏHİFƏDƏKİ DETAL SƏTİR SAYI" Style="{StaticResource SettingLabel}"/>
+                                    <TextBox Grid.Column="1" Style="{StaticResource SettingInput}" Text="{Binding PrinterSettings.AdditionRowCount, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <!-- SUB-TAB 4: FAKTURA PRİNTERİ -->
+                    <TabItem Header="FAKTURA PRİNTERİ" FontWeight="SemiBold" FontSize="11">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
+                            <StackPanel MaxWidth="880" HorizontalAlignment="Left">
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="1" Text="—— PRİNTER ADI ——" FontSize="11" FontWeight="Bold" Foreground="#475569" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="—— DİZAYN ADI ——" FontSize="11" FontWeight="Bold" Foreground="#475569" HorizontalAlignment="Center"/>
+                                </Grid>
+
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="FAKTURA PRİNTERİ" Style="{StaticResource SettingLabel}"/>
+                                    <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding Printers}"
+                                              SelectedValuePath="PrinterID"
+                                              SelectedValue="{Binding PrinterSettings.InvoicePrinterID}"
+                                              DisplayMemberPath="PrinterName"/>
+                                    <ComboBox Grid.Column="2" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
+                                              ItemsSource="{Binding PrinterDesigns}"
+                                              SelectedValuePath="DesignName"
+                                              SelectedValue="{Binding PrinterSettings.InvoiceDesignPath}"
+                                              DisplayMemberPath="DesignName"
+                                              IsEditable="True"/>
+                                </Grid>
+
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="ÜST BOŞLUQ SƏTİR SAYI" Style="{StaticResource SettingLabel}"/>
+                                    <TextBox Grid.Column="1" Style="{StaticResource SettingInput}" Text="{Binding PrinterSettings.InvoiceTopFeed, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Grid>
+
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="200"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="SƏHİFƏDƏKİ DETAL SƏTİR SAYI" Style="{StaticResource SettingLabel}"/>
+                                    <TextBox Grid.Column="1" Style="{StaticResource SettingInput}" Text="{Binding PrinterSettings.InvoiceRowCount, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <!-- SUB-TAB 5: ÇAP PARAMETRLƏRİ -->
+                    <TabItem Header="ÇAP PARAMETRLƏRİ" FontWeight="SemiBold" FontSize="11">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
+                            <StackPanel MaxWidth="880" HorizontalAlignment="Left">
+                                <CheckBox Content="BU TERMİNALDA VERİLƏN MASA SİFARİŞLƏRİNİ MƏTBƏX PRİNTERİNDƏ ÇAP ET" IsChecked="{Binding PrinterSettings.PrintDineInOrdersKitchen}" Style="{StaticResource SettingCheckBox}"/>
+                                <CheckBox Content="BU TERMİNALDA VERİLƏN BAR SİFARİŞLƏRİNİ MƏTBƏX PRİNTERİNDƏ ÇAP ET" IsChecked="{Binding PrinterSettings.PrintBarTableOrdersKitchen}" Style="{StaticResource SettingCheckBox}"/>
+                                <CheckBox Content="BU TERMİNALDA VERİLƏN AL GÖTÜR (PAKET) SİFARİŞLƏRİNİ MƏTBƏX PRİNTERİNDƏ ÇAP ET" IsChecked="{Binding PrinterSettings.PrintTakeOutOrdersKitchen}" Style="{StaticResource SettingCheckBox}"/>
+                                <CheckBox Content="BU TERMİNALDA VERİLƏN TEZGAH (SÜRƏTLİ) SİFARİŞLƏRİNİ MƏTBƏX PRİNTERİNDƏ ÇAP ET" IsChecked="{Binding PrinterSettings.PrintDriveThruOrdersKitchen}" Style="{StaticResource SettingCheckBox}"/>
+                                <CheckBox Content="BU TERMİNALDA VERİLƏN ÇATDIRILMA SİFARİŞLƏRİNİ MƏTBƏX PRİNTERİNDƏ ÇAP ET" IsChecked="{Binding PrinterSettings.PrintDeliveryOrdersKitchen}" Style="{StaticResource SettingCheckBox}"/>
+
+                                <Border Height="1" Background="#e2e8f0" Margin="0,12"/>
+
+                                <CheckBox Content="HESAB ÇIXARIŞINDA LƏĞV EDİLMİŞ SƏTİRLƏRİ DƏ ÇAP ET" IsChecked="{Binding Station.PrintVoidedLinesOnGuestCheck}" Style="{StaticResource SettingCheckBox}"/>
+                                <CheckBox Content="MƏTBƏX ÇIXARIŞINDA 2-Cİ DİLİ İSTİFADƏ ET" IsChecked="{Binding Station.UseSecondLangOnKitchenPrint}" Style="{StaticResource SettingCheckBox}"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                </TabControl>
             </TabItem>
 
             <!-- TAB 5: PORT SAZLAMALARI -->
