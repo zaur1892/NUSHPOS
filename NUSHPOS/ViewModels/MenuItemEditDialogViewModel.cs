@@ -16,6 +16,12 @@ public partial class MenuItemEditDialogViewModel : ViewModelBase
     private readonly MenuService _menuService;
 
     [ObservableProperty]
+    private ObservableCollection<MenuItem> _templateItems = new();
+
+    [ObservableProperty]
+    private MenuItem? _selectedTemplateItem;
+
+    [ObservableProperty]
     private MenuItem _item = new();
 
     [ObservableProperty]
@@ -166,6 +172,90 @@ public partial class MenuItemEditDialogViewModel : ViewModelBase
         var combos = await _menuService.GetComboMenuNamesAsync();
         ComboItems = new ObservableCollection<MenuComboItem>(combos);
         SelectedComboItem = ComboItems.FirstOrDefault(c => c.ComboMenuItemKey == Item.ComboMenuItemKey);
+
+        // Load reference template items
+        var allItems = await _menuService.GetAllActiveMenuItemsAsync();
+        var templateList = new ObservableCollection<MenuItem>();
+        templateList.Add(new MenuItem { AutoID = 0, MenuItemText = "----" });
+        foreach (var itm in allItems)
+        {
+            templateList.Add(itm);
+        }
+        TemplateItems = templateList;
+        SelectedTemplateItem = TemplateItems.FirstOrDefault();
+    }
+
+    partial void OnSelectedTemplateItemChanged(MenuItem? value)
+    {
+        if (value == null || value.AutoID == 0) return;
+
+        // Copy all characteristics from the template
+        Item.MenuCategoryID = value.MenuCategoryID;
+        Item.MenuCategoryKey = value.MenuCategoryKey;
+        Item.MenuGroupID = value.MenuGroupID;
+        Item.MenuGroupKey = value.MenuGroupKey;
+        Item.TaxGroupID = value.TaxGroupID;
+        Item.TaxPercent = value.TaxPercent;
+        Item.DefaultUnitPrice = value.DefaultUnitPrice;
+        Item.MenuItemCost = value.MenuItemCost;
+        Item.MenuItemDescription = value.MenuItemDescription;
+        Item.MenuItemNotification = value.MenuItemNotification;
+        Item.MenuItemActive = value.MenuItemActive ?? true;
+        Item.MenuItemInStock = value.MenuItemInStock ?? true;
+        Item.MenuItemTaxable = value.MenuItemTaxable ?? true;
+        Item.MenuItemDiscountable = value.MenuItemDiscountable ?? true;
+        Item.PictureName = value.PictureName;
+        Item.ShowCaption = value.ShowCaption ?? true;
+        Item.IsComboMenu = value.IsComboMenu;
+        Item.IsTopMenu = value.IsTopMenu;
+        Item.ButtonColor = value.ButtonColor;
+        Item.Barcode = value.Barcode;
+        Item.Barcode2 = value.Barcode2;
+        Item.ItemDelCharge = value.ItemDelCharge;
+        Item.ItemDelComp = value.ItemDelComp;
+        Item.DineInPrice = value.DineInPrice;
+        Item.BarTabPrice = value.BarTabPrice;
+        Item.TakeOutPrice = value.TakeOutPrice;
+        Item.DriveThruPrice = value.DriveThruPrice;
+        Item.DeliveryPrice = value.DeliveryPrice;
+        Item.OrderByWeight = value.OrderByWeight;
+        Item.PrintPizzaLabel = value.PrintPizzaLabel;
+        Item.KitchenSortNumber = value.KitchenSortNumber;
+        Item.ModBuilderTemplateID = value.ModBuilderTemplateID;
+        Item.MenuItemTypeID = value.MenuItemTypeID;
+        Item.AccountingCode = value.AccountingCode;
+        Item.PrintOnLabel = value.PrintOnLabel;
+        Item.UsedPrinterID1 = value.UsedPrinterID1;
+        Item.UsedPrinterID2 = value.UsedPrinterID2;
+        Item.UsedPrinterID3 = value.UsedPrinterID3;
+        Item.SecurityLevel = value.SecurityLevel ?? 1;
+        Item.MenuModifierKey = value.MenuModifierKey;
+        Item.MenuModifierForcedKey = value.MenuModifierForcedKey;
+        Item.SecLangMenuItemText = value.SecLangMenuItemText;
+        Item.UseKds1 = value.UseKds1;
+        Item.UseKds2 = value.UseKds2;
+        Item.UseKds3 = value.UseKds3;
+        Item.UseKds4 = value.UseKds4;
+        Item.UseKds5 = value.UseKds5;
+        Item.UseKds6 = value.UseKds6;
+        Item.UseKds7 = value.UseKds7;
+        Item.UseKds8 = value.UseKds8;
+
+        // Leave product name blank for new item input
+        Item.MenuItemText = string.Empty;
+
+        // Trigger property changed notifications on Item
+        OnPropertyChanged(nameof(Item));
+
+        // Update dropdown selections to reflect template values
+        SelectedCategory = Categories.FirstOrDefault(c => c.MenuCategoryID == Item.MenuCategoryID || c.MenuCategoryKey == Item.MenuCategoryKey);
+        SelectedGroup = Groups.FirstOrDefault(g => g.MenuGroupID == Item.MenuGroupID || g.MenuGroupKey == Item.MenuGroupKey);
+        SelectedTaxGroup = TaxGroups.FirstOrDefault(t => t.TaxGroupID == Item.TaxGroupID);
+        SelectedPrinter1 = Printers.FirstOrDefault(p => p.PrinterID == Item.UsedPrinterID1);
+        SelectedPrinter2 = Printers.FirstOrDefault(p => p.PrinterID == Item.UsedPrinterID2);
+        SelectedPrinter3 = Printers.FirstOrDefault(p => p.PrinterID == Item.UsedPrinterID3);
+        SelectedModifierGroup = ModifierGroups.FirstOrDefault(m => m.MenuModifierGroupKey == Item.MenuModifierKey);
+        SelectedForcedModifierGroup = ModifierGroups.FirstOrDefault(m => m.MenuModifierGroupKey == Item.MenuModifierForcedKey);
     }
 
     [RelayCommand]

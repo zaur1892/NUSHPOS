@@ -201,6 +201,70 @@ public class MenuService
         return await connection.QueryAsync<MenuItem>(sql, new { MenuGroupId = menuGroupId });
     }
 
+    public async Task<IEnumerable<MenuItem>> GetAllActiveMenuItemsAsync()
+    {
+        using var connection = _db.CreateConnection();
+        const string sql = @"
+            SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+            SELECT 
+                AutoID, 
+                MenuItemID, 
+                MenuItemText, 
+                MenuCategoryID, 
+                MenuGroupID, 
+                TaxGroupID,
+                DisplayIndex, 
+                DefaultUnitPrice, 
+                MenuItemCost, 
+                MenuItemDescription, 
+                MenuItemNotification, 
+                MenuItemActive, 
+                MenuItemInStock, 
+                MenuItemTaxable, 
+                TaxPercent, 
+                MenuModifierID, 
+                MenuItemDiscountable, 
+                SecLangMenuItemText, 
+                PictureName, 
+                ShowCaption, 
+                IsComboMenu, 
+                IsTopMenu, 
+                ButtonColor, 
+                Barcode, 
+                Barcode2, 
+                ItemDelCharge, 
+                ItemDelComp, 
+                DineInPrice, 
+                BarTabPrice, 
+                TakeOutPrice, 
+                DriveThruPrice, 
+                DeliveryPrice, 
+                OrderByWeight, 
+                PrintPizzaLabel, 
+                KitchenSortNumber, 
+                ModBuilderTemplateID, 
+                MenuItemTypeID, 
+                AccountingCode, 
+                UsedPrinterID1, 
+                UsedPrinterID2, 
+                UsedPrinterID3, 
+                UsedPrinterID4, 
+                UsedPrinterID5, 
+                UseKds1, UseKds2, UseKds3, UseKds4, UseKds5, UseKds6, UseKds7, UseKds8, UseKds9, UseKds10, 
+                CAST(MenuItemKey AS NVARCHAR(100)) AS MenuItemKey, 
+                CAST(MenuCategoryKey AS NVARCHAR(100)) AS MenuCategoryKey, 
+                CAST(MenuGroupKey AS NVARCHAR(100)) AS MenuGroupKey, 
+                CAST(MenuModifierKey AS NVARCHAR(100)) AS MenuModifierKey, 
+                CAST(MenuModifierForcedKey AS NVARCHAR(100)) AS MenuModifierForcedKey,
+                SecurityLevel,
+                PrintOnLabel
+            FROM MenuItems 
+            WHERE ISNULL(MenuItemActive, 1) = 1
+            ORDER BY MenuItemText;
+        ";
+        return await connection.QueryAsync<MenuItem>(sql);
+    }
+
     public async Task<IEnumerable<MenuCategory>> GetCategoriesAsync()
     {
         using var connection = _db.CreateConnection();
