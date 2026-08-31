@@ -37,11 +37,11 @@ public partial class TerminalSettingsViewModel : ViewModelBase
     [ObservableProperty]
     private ObservableCollection<string> _loginEntrances = new()
     {
-        "MASA SATIÅI",
-        "SÃœRÆTLÄ° SATIÅ",
-        "Ã‡ATDIRILMA",
-        "GÃ–TÃœR-APAR",
-        "QÆBZ Ã‡AÄIRMA"
+        "MASA SATIŞI",
+        "SÜRƏTLİ SATIŞ",
+        "ÇATDIRILMA",
+        "GÖTÜR-APAR",
+        "QƏBZ ÇAĞIRMA"
     };
 
     [ObservableProperty]
@@ -57,10 +57,10 @@ public partial class TerminalSettingsViewModel : ViewModelBase
     [ObservableProperty]
     private ObservableCollection<string> _languages = new()
     {
-        "AzÉ™rbaycan",
-        "TÃ¼rkÃ§e",
+        "Azərbaycan",
+        "Türkçe",
         "English",
-        "Ğ ÑƒÑÑĞºĞ¸Ğ¹"
+        "Русский"
     };
 
     [ObservableProperty]
@@ -99,7 +99,7 @@ public partial class TerminalSettingsViewModel : ViewModelBase
     public TerminalSettingsViewModel(StationSettingsService settingsService)
     {
         _settingsService = settingsService;
-        Title = "TERMÄ°NAL PARAMETRLÆRÄ°";
+        Title = "TERMİNAL PARAMETRLƏRİ";
 
         _ = LoadSettingsAsync();
     }
@@ -132,7 +132,7 @@ public partial class TerminalSettingsViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"ParametrlÉ™r yÃ¼klÉ™nÉ™rkÉ™n xÉ™ta baÅŸ verdi: {ex.Message}", "XÉ™ta", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Parametrlər yüklənərkən xəta baş verdi: {ex.Message}", "Xəta", MessageBoxButton.OK, MessageBoxImage.Error);
         }
         finally
         {
@@ -145,7 +145,7 @@ public partial class TerminalSettingsViewModel : ViewModelBase
     {
         var dialog = new OpenFileDialog
         {
-            Filter = "ÅÉ™kil FayllarÄ±|*.png;*.jpg;*.jpeg;*.bmp|BÃ¼tÃ¼n Fayllar|*.*"
+            Filter = "Şəkil Faylları|*.png;*.jpg;*.jpeg;*.bmp|Bütün Fayllar|*.*"
         };
         if (dialog.ShowDialog() == true)
         {
@@ -166,7 +166,7 @@ public partial class TerminalSettingsViewModel : ViewModelBase
     {
         var dialog = new OpenFileDialog
         {
-            Filter = "ÅÉ™kil FayllarÄ±|*.png;*.jpg;*.jpeg;*.bmp|BÃ¼tÃ¼n Fayllar|*.*"
+            Filter = "Şəkil Faylları|*.png;*.jpg;*.jpeg;*.bmp|Bütün Fayllar|*.*"
         };
         if (dialog.ShowDialog() == true)
         {
@@ -187,10 +187,10 @@ public partial class TerminalSettingsViewModel : ViewModelBase
     {
         if (string.IsNullOrWhiteSpace(Station.CallCenterClientAddress))
         {
-            MessageBox.Show("ZÉ™hmÉ™t olmasa Ã‡aÄŸrÄ± MÉ™rkÉ™zi Ã¼nvanÄ±nÄ± daxil edin.", "MÉ™lumat", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Zəhmət olmasa Çağrı Mərkəzi ünvanını daxil edin.", "Məlumat", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
-        MessageBox.Show($"Ã‡aÄŸrÄ± MÉ™rkÉ™zi serverinÉ™ qoÅŸulma uÄŸurludur: {Station.CallCenterClientAddress}", "UÄŸurlu QoÅŸulma", MessageBoxButton.OK, MessageBoxImage.Information);
+        MessageBox.Show($"Çağrı Mərkəzi serverinə qoşulma uğurludur: {Station.CallCenterClientAddress}", "Uğurlu Qoşulma", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     [RelayCommand]
@@ -198,10 +198,10 @@ public partial class TerminalSettingsViewModel : ViewModelBase
     {
         if (string.IsNullOrWhiteSpace(Station.CentralCallCenterClientAddress))
         {
-            MessageBox.Show("ZÉ™hmÉ™t olmasa MÉ™rkÉ™zi Ã‡aÄŸrÄ± MÉ™rkÉ™zi Ã¼nvanÄ±nÄ± daxil edin.", "MÉ™lumat", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Zəhmət olmasa Mərkəzi Çağrı Mərkəzi ünvanını daxil edin.", "Məlumat", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
-        MessageBox.Show($"MÉ™rkÉ™zi Ã‡aÄŸrÄ± MÉ™rkÉ™zi serverinÉ™ qoÅŸulma uÄŸurludur: {Station.CentralCallCenterClientAddress}", "UÄŸurlu QoÅŸulma", MessageBoxButton.OK, MessageBoxImage.Information);
+        MessageBox.Show($"Mərkəzi Çağrı Mərkəzi serverinə qoşulma uğurludur: {Station.CentralCallCenterClientAddress}", "Uğurlu Qoşulma", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     [RelayCommand]
@@ -212,12 +212,12 @@ public partial class TerminalSettingsViewModel : ViewModelBase
             await _settingsService.UpdateStationSettingsAsync(Station);
             await _settingsService.UpdateStationPrinterSettingsAsync(PrinterSettings);
 
-            MessageBox.Show("Terminal parametrlÉ™ri uÄŸurla yadda saxlanÄ±ldÄ±!", "MÉ™lumat", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Terminal parametrləri uğurla yadda saxlanıldı!", "Məlumat", MessageBoxButton.OK, MessageBoxImage.Information);
             RequestClose?.Invoke();
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Yadda saxlanÄ±larkÉ™n xÉ™ta baÅŸ verdi: {ex.Message}", "XÉ™ta", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Yadda saxlanılarkən xəta baş verdi: {ex.Message}", "Xəta", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
