@@ -58,6 +58,7 @@ public class StationSettings
     public bool AskPasswordForReduce { get; set; }
     public bool MediaDisplayIsActive { get; set; }
     public string? MediaDisplayOnWaiting { get; set; }
+    public string? MediaDisplayOnSale { get; set; }
     public string MediaDisplayClosedMessage { get; set; } = "KASA BAĞLIDIR";
     public string MediaDisplayMoneyOver { get; set; } = "TƏŞƏKKÜR EDİRİK";
     public string? EditKey { get; set; }
