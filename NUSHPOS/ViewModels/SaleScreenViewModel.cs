@@ -20,6 +20,9 @@ public partial class SaleScreenViewModel : ViewModelBase
     private readonly DiscountService _discountService;
     private readonly CustomerService _customerService;
     private readonly AccessLogService _accessLogService;
+    private readonly StationSettingsService _stationSettingsService;
+    private readonly FastReportService _fastReportService;
+    private readonly AuthorityService _authorityService;
 
     // Order info
     [ObservableProperty] private int _orderType = 1; // 1=DineIn, 3=TakeOut, 5=Delivery
@@ -65,7 +68,10 @@ public partial class SaleScreenViewModel : ViewModelBase
         PaymentService paymentService,
         DiscountService discountService,
         CustomerService customerService,
-        AccessLogService accessLogService)
+        AccessLogService accessLogService,
+        StationSettingsService stationSettingsService,
+        FastReportService fastReportService,
+        AuthorityService authorityService)
     {
         _navigationService = navigationService;
         _menuService = menuService;
@@ -74,6 +80,9 @@ public partial class SaleScreenViewModel : ViewModelBase
         _discountService = discountService;
         _customerService = customerService;
         _accessLogService = accessLogService;
+        _stationSettingsService = stationSettingsService;
+        _fastReportService = fastReportService;
+        _authorityService = authorityService;
         Title = "Satış Ekranı";
     }
 
@@ -271,7 +280,12 @@ public partial class SaleScreenViewModel : ViewModelBase
                 TotalPrice = price * Quantity,
                 TaxPercent = item.TaxPercent ?? 0,
                 MenuItemGroupText = item.MenuItemGroupText ?? "",
-                MenumItemCategoryText = item.MenumItemCategoryText ?? ""
+                MenumItemCategoryText = item.MenumItemCategoryText ?? "",
+                UsedPrinterID1 = item.UsedPrinterID1,
+                UsedPrinterID2 = item.UsedPrinterID2,
+                UsedPrinterID3 = item.UsedPrinterID3,
+                UsedPrinterID4 = item.UsedPrinterID4,
+                UsedPrinterID5 = item.UsedPrinterID5
             });
         }
         
@@ -334,14 +348,41 @@ public partial class SaleScreenViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void RemoveOrderLine()
+    private async Task RemoveOrderLine()
     {
         if (IsOrderClosedOrVoided()) return;
         if (SelectedOrderLine != null)
         {
+            if (SelectedOrderLine.IsExisting)
+            {
+                if (!await _authorityService.ValidateActionAccessAsync("voidOrderLine", "MƏHSULU LƏĞV ETMƏK (SƏTİR İMTİNASI)"))
+                    return;
+
+                if (SelectedOrderLine.AutoID > 0)
+                {
+                    await _orderService.DeleteOrderTransactionAsync(SelectedOrderLine.AutoID);
+                    await _accessLogService.InsertAccessLogAsync(
+                        branchId: SessionManager.BranchID,
+                        stationId: SessionManager.StationID,
+                        employeeId: SessionManager.EmployeeID,
+                        actionName: "SƏTİR LƏĞVİ",
+                        wrongPassword: "",
+                        additionalInfo: $"{SelectedOrderLine.MenuItemText} ({SelectedOrderLine.Quantity} əd.) ləğv edildi",
+                        isSuccess: true,
+                        orderKey: _currentOrder?.OrderKey ?? "",
+                        transactionKey: ""
+                    );
+                }
+            }
+
             OrderLines.Remove(SelectedOrderLine);
             SelectedOrderLine = null;
             RecalculateTotals();
+
+            if (_currentOrder != null && !string.IsNullOrEmpty(_currentOrder.OrderKey))
+            {
+                await _orderService.FinalizeOrderProcessingAsync(_currentOrder.OrderKey);
+            }
         }
     }
 
@@ -443,8 +484,11 @@ public partial class SaleScreenViewModel : ViewModelBase
                 await _orderService.UpdateOrderAsync(_currentOrder);
             }
 
+            // Gather unprinted lines before saving
+            var unprintedLines = OrderLines.Where(l => !l.IsExisting).ToList();
+
             // Save order lines
-            foreach (var line in OrderLines.Where(l => !l.IsExisting))
+            foreach (var line in unprintedLines)
             {
                 var transaction = new OrderTransaction
                 {
@@ -476,6 +520,12 @@ public partial class SaleScreenViewModel : ViewModelBase
                 };
                 await _orderService.AddOrderTransactionAsync(transaction);
                 line.IsExisting = true;
+            }
+
+            // Print kitchen orders for newly added lines
+            if (unprintedLines.Count > 0)
+            {
+                await PrintKitchenOrdersAsync(unprintedLines);
             }
 
             // For TakeOut/Delivery, go to payment
@@ -510,13 +560,230 @@ public partial class SaleScreenViewModel : ViewModelBase
     [RelayCommand]
     private async Task PrintGuestCheck()
     {
-        if (_currentOrder != null)
+        if (IsOrderClosedOrVoided()) return;
+        if (OrderLines.Count == 0)
         {
+            System.Windows.MessageBox.Show("Çekdə heç bir məhsul yoxdur.", "Məlumat", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            return;
+        }
+
+        if (!await _authorityService.ValidateActionAccessAsync("printGuestCheck", "QONAQ HESABINI ÇAP ETMƏK"))
+            return;
+
+        try
+        {
+            IsBusy = true;
+
+            // Ensure order is saved before printing
+            if (_currentOrder == null || OrderLines.Any(l => !l.IsExisting))
+            {
+                await SaveOrderInternalAsync();
+            }
+
+            if (_currentOrder == null) return;
+
             _currentOrder.GuestCheckPrinted = true;
             _currentOrder.GuestCheckPrintCount = (_currentOrder.GuestCheckPrintCount ?? 0) + 1;
             await _orderService.UpdateOrderAsync(_currentOrder);
-            // TODO: Actually print the check
+
+            var printerSettings = await _stationSettingsService.GetStationPrinterSettingsAsync(SessionManager.StationID);
+            string printerName = printerSettings?.CheckPrinterName ?? "";
+            
+            if (string.IsNullOrWhiteSpace(printerName))
+            {
+                System.Windows.MessageBox.Show("Hesab printeri təyin edilməyib! Zəhmət olmasa Terminal Tənzimləmələri bölməsindən Hesab printerini seçin.", "Xəbərdarlıq", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                return;
+            }
+
+            string designXml = await GetDesignDataAsync(printerSettings?.CheckDesignPath, isKitchen: false);
+
+            var dt = new System.Data.DataTable("OrderTransactions");
+            dt.Columns.Add("MenuItemText", typeof(string));
+            dt.Columns.Add("DisplayText", typeof(string));
+            dt.Columns.Add("Quantity", typeof(decimal));
+            dt.Columns.Add("MenuItemUnitPrice", typeof(decimal));
+            dt.Columns.Add("ExtendedPrice", typeof(decimal));
+            dt.Columns.Add("Notes", typeof(string));
+            dt.Columns.Add("AddDateTime", typeof(DateTime));
+
+            foreach (var line in OrderLines)
+            {
+                dt.Rows.Add(
+                    line.MenuItemText,
+                    line.MenuItemText,
+                    line.Quantity,
+                    line.UnitPrice,
+                    line.TotalPrice,
+                    line.Notes ?? "",
+                    DateTime.Now
+                );
+            }
+
+            var parameters = new System.Collections.Generic.Dictionary<string, object>
+            {
+                { "RestaurantName", "NUSH RESTORAN" },
+                { "OrderID", (_currentOrder.OrderID > 0 ? _currentOrder.OrderID : OrderId).ToString() },
+                { "ReceiptDate", DateTime.Now.ToString("dd.MM.yyyy HH:mm") },
+                { "WaiterName", SessionManager.EmployeeName },
+                { "TableName", TableName },
+                { "GuestNumber", GuestCount > 0 ? GuestCount : 1 },
+                { "DiscountText", AppliedDiscountName },
+                { "DiscountAmount", DiscountTotal },
+                { "GrandTotal", GrandTotal },
+                { "SubTotal", SubTotal },
+                { "OrderNotes", "" },
+                { "PhoneInfo", "Tel: (012) 000-00-00" }
+            };
+
+            bool printed = await _fastReportService.PrintReportAsync(designXml, printerName, parameters, dt);
+            if (!printed)
+            {
+                System.Windows.MessageBox.Show($"Hesab çap edilərkən xəta baş verdi. Printer: {printerName}", "Xəta", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
         }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show($"Hesab çap edilərkən xəta baş verdi: {ex.Message}", "Xəta", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task PrintKitchenOrdersAsync(System.Collections.Generic.List<OrderLineViewModel> newLines)
+    {
+        if (newLines == null || newLines.Count == 0) return;
+
+        try
+        {
+            var printerSettings = await _stationSettingsService.GetStationPrinterSettingsAsync(SessionManager.StationID);
+            if (printerSettings == null) return;
+
+            // Build list of active kitchen printer configurations (Kitchen1..Kitchen20)
+            var kitchenSlots = new System.Collections.Generic.List<(int SlotNumber, int? PrinterID, string? PrinterName, string? DesignPath)>();
+
+            void AddSlot(int slot, int? id, string? name, string? design)
+            {
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    kitchenSlots.Add((slot, id, name, design));
+                }
+            }
+
+            AddSlot(1, printerSettings.Kitchen1PrinterID, printerSettings.Kitchen1PrinterName, printerSettings.Kitchen1DesignPath);
+            AddSlot(2, printerSettings.Kitchen2PrinterID, printerSettings.Kitchen2PrinterName, printerSettings.Kitchen2DesignPath);
+            AddSlot(3, printerSettings.Kitchen3PrinterID, printerSettings.Kitchen3PrinterName, printerSettings.Kitchen3DesignPath);
+            AddSlot(4, printerSettings.Kitchen4PrinterID, printerSettings.Kitchen4PrinterName, printerSettings.Kitchen4DesignPath);
+            AddSlot(5, printerSettings.Kitchen5PrinterID, printerSettings.Kitchen5PrinterName, printerSettings.Kitchen5DesignPath);
+            AddSlot(6, printerSettings.Kitchen6PrinterID, printerSettings.Kitchen6PrinterName, printerSettings.Kitchen6DesignPath);
+            AddSlot(7, printerSettings.Kitchen7PrinterID, printerSettings.Kitchen7PrinterName, printerSettings.Kitchen7DesignPath);
+            AddSlot(8, printerSettings.Kitchen8PrinterID, printerSettings.Kitchen8PrinterName, printerSettings.Kitchen8DesignPath);
+            AddSlot(9, printerSettings.Kitchen9PrinterID, printerSettings.Kitchen9PrinterName, printerSettings.Kitchen9DesignPath);
+            AddSlot(10, printerSettings.Kitchen10PrinterID, printerSettings.Kitchen10PrinterName, printerSettings.Kitchen10DesignPath);
+            AddSlot(11, printerSettings.Kitchen11PrinterID, printerSettings.Kitchen11PrinterName, printerSettings.Kitchen11DesignPath);
+            AddSlot(12, printerSettings.Kitchen12PrinterID, printerSettings.Kitchen12PrinterName, printerSettings.Kitchen12DesignPath);
+            AddSlot(13, printerSettings.Kitchen13PrinterID, printerSettings.Kitchen13PrinterName, printerSettings.Kitchen13DesignPath);
+            AddSlot(14, printerSettings.Kitchen14PrinterID, printerSettings.Kitchen14PrinterName, printerSettings.Kitchen14DesignPath);
+            AddSlot(15, printerSettings.Kitchen15PrinterID, printerSettings.Kitchen15PrinterName, printerSettings.Kitchen15DesignPath);
+            AddSlot(16, printerSettings.Kitchen16PrinterID, printerSettings.Kitchen16PrinterName, printerSettings.Kitchen16DesignPath);
+            AddSlot(17, printerSettings.Kitchen17PrinterID, printerSettings.Kitchen17PrinterName, printerSettings.Kitchen17DesignPath);
+            AddSlot(18, printerSettings.Kitchen18PrinterID, printerSettings.Kitchen18PrinterName, printerSettings.Kitchen18DesignPath);
+            AddSlot(19, printerSettings.Kitchen19PrinterID, printerSettings.Kitchen19PrinterName, printerSettings.Kitchen19DesignPath);
+            AddSlot(20, printerSettings.Kitchen20PrinterID, printerSettings.Kitchen20PrinterName, printerSettings.Kitchen20DesignPath);
+
+            if (kitchenSlots.Count == 0 && !string.IsNullOrWhiteSpace(printerSettings.AdditionPrinterName))
+            {
+                kitchenSlots.Add((1, printerSettings.AdditionPrinterID, printerSettings.AdditionPrinterName, printerSettings.AdditionDesignPath));
+            }
+
+            if (kitchenSlots.Count == 0) return;
+
+            foreach (var slot in kitchenSlots)
+            {
+                var targetLines = newLines.Where(line =>
+                {
+                    bool hasExplicitPrinter = (line.UsedPrinterID1 > 0) || (line.UsedPrinterID2 > 0) || (line.UsedPrinterID3 > 0) || (line.UsedPrinterID4 > 0) || (line.UsedPrinterID5 > 0);
+                    if (!hasExplicitPrinter)
+                    {
+                        return slot.SlotNumber == kitchenSlots[0].SlotNumber;
+                    }
+
+                    return (slot.PrinterID.HasValue && slot.PrinterID > 0 && 
+                            (line.UsedPrinterID1 == slot.PrinterID || line.UsedPrinterID2 == slot.PrinterID || line.UsedPrinterID3 == slot.PrinterID || line.UsedPrinterID4 == slot.PrinterID || line.UsedPrinterID5 == slot.PrinterID))
+                        || (line.UsedPrinterID1 == slot.SlotNumber || line.UsedPrinterID2 == slot.SlotNumber || line.UsedPrinterID3 == slot.SlotNumber || line.UsedPrinterID4 == slot.SlotNumber || line.UsedPrinterID5 == slot.SlotNumber);
+                }).ToList();
+
+                if (targetLines.Count == 0) continue;
+
+                string designXml = await GetDesignDataAsync(slot.DesignPath, isKitchen: true);
+
+                var dt = new System.Data.DataTable("OrderTransactions");
+                dt.Columns.Add("MenuItemText", typeof(string));
+                dt.Columns.Add("DisplayText", typeof(string));
+                dt.Columns.Add("Quantity", typeof(decimal));
+                dt.Columns.Add("MenuItemUnitPrice", typeof(decimal));
+                dt.Columns.Add("ExtendedPrice", typeof(decimal));
+                dt.Columns.Add("Notes", typeof(string));
+                dt.Columns.Add("AddDateTime", typeof(DateTime));
+
+                foreach (var line in targetLines)
+                {
+                    dt.Rows.Add(
+                        line.MenuItemText,
+                        line.MenuItemText,
+                        line.Quantity,
+                        line.UnitPrice,
+                        line.TotalPrice,
+                        line.Notes ?? "",
+                        DateTime.Now
+                    );
+                }
+
+                var parameters = new System.Collections.Generic.Dictionary<string, object>
+                {
+                    { "Title", "MƏTBƏX SİFARİŞİ" },
+                    { "OrderID", (_currentOrder?.OrderID ?? OrderId).ToString() },
+                    { "ReceiptDate", DateTime.Now.ToString("dd.MM.yyyy") },
+                    { "ReceiptTime", DateTime.Now.ToString("HH:mm:ss") },
+                    { "WaiterName", SessionManager.EmployeeName },
+                    { "TableName", TableName },
+                    { "GuestNumber", GuestCount > 0 ? GuestCount : 1 },
+                    { "OrderNotes", "" }
+                };
+
+                await _fastReportService.PrintReportAsync(designXml, slot.PrinterName!, parameters, dt);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Kitchen Print Error: {ex}");
+        }
+    }
+
+    private async Task<string> GetDesignDataAsync(string? designNameOrPath, bool isKitchen)
+    {
+        if (!string.IsNullOrWhiteSpace(designNameOrPath))
+        {
+            var design = await _stationSettingsService.GetPrinterDesignByNameAsync(designNameOrPath);
+            if (design != null && !string.IsNullOrWhiteSpace(design.DesignData))
+            {
+                return design.DesignData;
+            }
+
+            if (System.IO.File.Exists(designNameOrPath))
+            {
+                try
+                {
+                    return await System.IO.File.ReadAllTextAsync(designNameOrPath);
+                }
+                catch { }
+            }
+        }
+
+        return isKitchen 
+            ? _fastReportService.GetKitchenOrderTemplate() 
+            : _fastReportService.GetHesabReceiptTemplate();
     }
 
     [RelayCommand]
@@ -528,6 +795,9 @@ public partial class SaleScreenViewModel : ViewModelBase
             System.Windows.MessageBox.Show("Zəhmət olmasa öncə məhsul əlavə edin.", "Xəta", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
             return;
         }
+
+        if (!await _authorityService.ValidateActionAccessAsync("discountOrder", "ÇEKƏ ÜMUMİ ENDİRİM TƏTBİQİ"))
+            return;
 
         if (_currentOrder == null || OrderLines.Any(l => !l.IsExisting))
         {
@@ -614,6 +884,9 @@ public partial class SaleScreenViewModel : ViewModelBase
             System.Windows.MessageBox.Show("Zəhmət olmasa öncə məhsulu sifarişə əlavə edib yadda saxlayın.", "Məlumat", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
             return;
         }
+
+        if (!await _authorityService.ValidateActionAccessAsync("discountMenuItem", "SEÇİLMİŞ MƏHSULA ENDİRİM TƏTBİQİ"))
+            return;
 
         var vm = new CheckDiscountViewModel(_discountService);
         await vm.InitializeAsync();
@@ -707,6 +980,9 @@ public partial class SaleScreenViewModel : ViewModelBase
             return;
         }
 
+        if (!await _authorityService.ValidateActionAccessAsync("settleWindow", "ÖDƏNİŞ PƏNCƏRƏSİNİ AÇMAQ"))
+            return;
+
         if (_currentOrder == null || OrderLines.Any(l => !l.IsExisting))
         {
             await SaveOrderInternalAsync();
@@ -745,4 +1021,10 @@ public partial class OrderLineViewModel : ObservableObject
     [ObservableProperty] private string _menuItemGroupText = "";
     [ObservableProperty] private string _menumItemCategoryText = "";
     [ObservableProperty] private bool _isExisting;
+    [ObservableProperty] private int? _usedPrinterID1;
+    [ObservableProperty] private int? _usedPrinterID2;
+    [ObservableProperty] private int? _usedPrinterID3;
+    [ObservableProperty] private int? _usedPrinterID4;
+    [ObservableProperty] private int? _usedPrinterID5;
+    [ObservableProperty] private string _notes = "";
 }

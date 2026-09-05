@@ -1,0 +1,334 @@
+<UserControl x:Class="NUSHPOS.Views.SecuritySettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:models="clr-namespace:NUSHPOS.Models"
+             xmlns:viewmodels="clr-namespace:NUSHPOS.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1000"
+             Background="#f0f4f9">
+
+    <UserControl.Resources>
+        <!-- Level to Progress Width Converter -->
+        <LinearGradientBrush x:Key="DegreeGradient" StartPoint="0,0.5" EndPoint="1,0.5">
+            <GradientStop Color="#a5f3fc" Offset="0.0" />
+            <GradientStop Color="#38bdf8" Offset="0.5" />
+            <GradientStop Color="#00a2ed" Offset="1.0" />
+        </LinearGradientBrush>
+
+        <!-- Custom Checkbox Style -->
+        <Style x:Key="PosCheckBox" TargetType="CheckBox">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1.25" ScaleY="1.25"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TabHeaderBtn" TargetType="Button">
+            <Setter Property="Background" Value="#dbe8f9"/>
+            <Setter Property="Foreground" Value="#1e3a5f"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Margin" Value="0,0,2,0"/>
+            <Setter Property="BorderThickness" Value="1,1,1,0"/>
+            <Setter Property="BorderBrush" Value="#94a3b8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="4,4,0,0" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="65"/>
+        </Grid.RowDefinitions>
+
+        <!-- TOP TITLE -->
+        <Border Grid.Row="0" Background="#1e2c43" CornerRadius="4" Padding="14,10" Margin="0,0,0,10">
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="🔐  TƏHLÜKƏSİZLİK VƏ İCAZƏ SAZLAMALARI" Foreground="White" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock Text="Səviyyə: 1 - 10" Foreground="#93c5fd" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
+            </Grid>
+        </Border>
+
+        <!-- TOP CATEGORY TABS AND SEARCH -->
+        <Grid Grid.Row="1" Margin="0,0,0,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- TABS -->
+            <ItemsControl Grid.Column="0" ItemsSource="{Binding Groups}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding}" 
+                                Style="{StaticResource TabHeaderBtn}"
+                                Command="{Binding DataContext.SelectGroupCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- LIVE SEARCH BOX -->
+            <Border Grid.Column="1" Background="White" BorderBrush="#0284c7" BorderThickness="1.5" CornerRadius="6" Height="34" Padding="10,0" VerticalAlignment="Bottom" Margin="0,0,0,1" Width="300">
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Grid.Column="0" Text="🔍" FontSize="13" Foreground="#0284c7" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    
+                    <TextBox Grid.Column="1" 
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                             FontSize="13" 
+                             FontWeight="Bold"
+                             Foreground="#0f172a" 
+                             CaretBrush="#0f172a"
+                             Background="Transparent" 
+                             BorderThickness="0" 
+                             VerticalAlignment="Center"
+                             VerticalContentAlignment="Center"
+                             Padding="0">
+                        <TextBox.Template>
+                            <ControlTemplate TargetType="TextBox">
+                                <Border Background="Transparent" BorderThickness="0" Padding="0">
+                                    <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </TextBox.Template>
+                    </TextBox>
+                    
+                    <!-- Placeholder -->
+                    <TextBlock Grid.Column="1" Text="İcazə adı ilə axtar..." FontSize="13" Foreground="#94a3b8" 
+                               IsHitTestVisible="False" VerticalAlignment="Center" Margin="2,0,0,0">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SearchText}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <!-- Clear button -->
+                    <Button Grid.Column="2" Content="✕" Width="22" Height="22" Background="#e2e8f0" 
+                            BorderThickness="0" Foreground="#475569" Cursor="Hand" FontWeight="Bold" FontSize="12"
+                            Command="{Binding ClearSearchCommand}" Margin="4,0,0,0">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="11"/>
+                            </Style>
+                        </Button.Resources>
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SearchText}" Value="">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- MAIN GRID TABLE -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#94a3b8" BorderThickness="1">
+            <DataGrid ItemsSource="{Binding FilteredAuthorities}" 
+                      AutoGenerateColumns="False" 
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      GridLinesVisibility="All"
+                      HorizontalGridLinesBrush="#cbd5e1"
+                      VerticalGridLinesBrush="#cbd5e1"
+                      HeadersVisibility="Column"
+                      RowHeight="32"
+                      Background="White"
+                      BorderThickness="0"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow">
+                
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#dbe8f9"/>
+                        <Setter Property="Foreground" Value="#1e3a5f"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="11"/>
+                        <Setter Property="Height" Value="32"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="BorderBrush" Value="#94a3b8"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                        <Setter Property="Padding" Value="6,4"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+
+                <DataGrid.Columns>
+                    <!-- ƏMƏLİYYAT ADI -->
+                    <DataGridTemplateColumn Header="ƏMƏLİYYAT ADI" Width="240">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type models:AuthorityItem}">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0">
+                                    <TextBlock Text="▶ " FontSize="8" Foreground="#0284c7" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <TextBlock Text="{Binding AuthorityText}" FontWeight="Bold" Foreground="#1e293b" VerticalAlignment="Center" FontSize="12"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- SƏVİYYƏ -->
+                    <DataGridTemplateColumn Header="SƏVİYYƏ" Width="85">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type models:AuthorityItem}">
+                                <Border Background="#00a2ed" CornerRadius="2" Margin="4,2" Padding="4,2">
+                                    <ComboBox ItemsSource="{Binding DataContext.LevelOptions, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                              SelectedItem="{Binding DefaultLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              FontWeight="Bold" 
+                                              FontSize="13" 
+                                              Foreground="White"
+                                              Background="Transparent"
+                                              BorderThickness="0"
+                                              HorizontalContentAlignment="Center"
+                                              VerticalContentAlignment="Center"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- DƏRƏCƏ (Visual Gradient Level Bar) -->
+                    <DataGridTemplateColumn Header="DƏRƏCƏ" Width="140">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type models:AuthorityItem}">
+                                <Grid Height="22" Margin="4,2" Background="#f1f5f9">
+                                    <ProgressBar Value="{Binding LevelPercent, Mode=OneWay}" 
+                                                 Maximum="100" 
+                                                 Minimum="0" 
+                                                 Height="20"
+                                                 Foreground="{StaticResource DegreeGradient}"
+                                                 Background="Transparent"
+                                                 BorderThickness="0"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- AÇIQLAMA / İZAHAT -->
+                    <DataGridTextColumn Header="AÇIQLAMA / İZAHAT" Binding="{Binding AuthorityDescription}" Width="*" IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="8,0"/>
+                                <Setter Property="Foreground" Value="#475569"/>
+                                <Setter Property="FontSize" Value="11"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <!-- MƏCBURİ -->
+                    <DataGridTemplateColumn Header="MƏCBURİ" Width="85">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type models:AuthorityItem}">
+                                <CheckBox IsChecked="{Binding NeedAllways, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                          Style="{StaticResource PosCheckBox}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- MÜDİR -->
+                    <DataGridTemplateColumn Header="MÜDİR" Width="85">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type models:AuthorityItem}">
+                                <CheckBox IsChecked="{Binding AllowManager, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                          Style="{StaticResource PosCheckBox}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- KASSİR -->
+                    <DataGridTemplateColumn Header="KASSİR" Width="85">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type models:AuthorityItem}">
+                                <CheckBox IsChecked="{Binding AllowCashier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                          Style="{StaticResource PosCheckBox}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- BOTTOM BUTTONS -->
+        <Border Grid.Row="3" Background="#f8fafc" BorderBrush="#cbd5e1" BorderThickness="1,0,1,1" CornerRadius="0,0,4,4" Padding="16,10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <!-- CANCEL BUTTON -->
+                <Button Content="İMTİNA" 
+                        Command="{Binding CancelCommand}"
+                        Width="140" Height="42" 
+                        Margin="0,0,12,0" 
+                        Background="#e11d48" 
+                        Foreground="White" 
+                        FontWeight="Bold" 
+                        FontSize="13" 
+                        BorderThickness="0" 
+                        Cursor="Hand">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="4"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <!-- SAVE AND CLOSE BUTTON -->
+                <Button Content="YADDA SAXLA VƏ BAĞLA" 
+                        Command="{Binding SaveAndCloseCommand}"
+                        Width="220" Height="42" 
+                        Background="#16a34a" 
+                        Foreground="White" 
+                        FontWeight="Bold" 
+                        FontSize="13" 
+                        BorderThickness="0" 
+                        Cursor="Hand">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="4"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

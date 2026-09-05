@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="2026-09-05 00:00:00" ReportInfo.Modified="2026-09-05 00:00:00" ReportInfo.CreatorVersion="2026.2.3.0">
+  <Dictionary>
+    <TableDataSource Name="OrderTransactions" ReferenceName="OrderTransactions" DataType="System.Int32" Enabled="true">
+      <Column Name="MenuItemText" DataType="System.String"/>
+      <Column Name="Quantity" DataType="System.Decimal"/>
+      <Column Name="MenuItemUnitPrice" DataType="System.Decimal"/>
+      <Column Name="ExtendedPrice" DataType="System.Decimal"/>
+      <Column Name="Notes" DataType="System.String"/>
+      <Column Name="DisplayText" DataType="System.String"/>
+      <Column Name="AddDateTime" DataType="System.DateTime"/>
+    </TableDataSource>
+    <Parameter Name="RestaurantName" DataType="System.String" Expression="&quot;NUSH RESTORAN&quot;"/>
+    <Parameter Name="OrderID" DataType="System.String" Expression="&quot;5296&quot;"/>
+    <Parameter Name="ReceiptDate" DataType="System.String" Expression="&quot;05/09/2026 00:45&quot;"/>
+    <Parameter Name="WaiterName" DataType="System.String" Expression="&quot;Kassir&quot;"/>
+    <Parameter Name="TableName" DataType="System.String" Expression="&quot;MASA 1&quot;"/>
+    <Parameter Name="GuestNumber" DataType="System.Int32" Expression="2"/>
+    <Parameter Name="DiscountText" DataType="System.String" Expression="&quot;&quot;"/>
+    <Parameter Name="DiscountAmount" DataType="System.Decimal" Expression="0.00"/>
+    <Parameter Name="GrandTotal" DataType="System.Decimal" Expression="45.00"/>
+    <Parameter Name="OrderNotes" DataType="System.String" Expression="&quot;&quot;"/>
+    <Parameter Name="PhoneInfo" DataType="System.String" Expression="&quot;Tel: (012) 000-00-00&quot;"/>
+  </Dictionary>
+  <ReportPage Name="Page1" PaperWidth="80" PaperHeight="297" LeftMargin="2" TopMargin="2" RightMargin="2" BottomMargin="2" FirstPageSource="1" OtherPagesSource="1">
+    <ReportTitleBand Name="ReportTitle1" Width="287.28" Height="130">
+      <TextObject Name="TxtTitle" Left="0" Top="5" Width="287.28" Height="26" Text="[RestaurantName]" Font="Arial, 13pt, style=Bold" HorzAlign="Center"/>
+      <LineObject Name="LineTop" Left="0" Top="35" Width="287.28"/>
+      <TextObject Name="TxtOrderID" Left="0" Top="40" Width="287.28" Height="16" Text="Çek №: [OrderID]" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="TxtDate" Left="0" Top="57" Width="287.28" Height="16" Text="Tarix: [ReceiptDate]" Font="Arial, 8.5pt"/>
+      <TextObject Name="TxtWaiter" Left="0" Top="74" Width="287.28" Height="16" Text="Personal: [WaiterName]" Font="Arial, 8.5pt"/>
+      <TextObject Name="TxtTable" Left="0" Top="91" Width="170" Height="16" Text="Masa №: [TableName]" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="TxtGuest" Left="170" Top="91" Width="117.28" Height="16" Text="Qonaq: [GuestNumber]" Font="Arial, 8.5pt" HorzAlign="Right"/>
+      <LineObject Name="LineHeader" Left="0" Top="125" Width="287.28" Style="Dash"/>
+    </ReportTitleBand>
+    <PageHeaderBand Name="PageHeader1" Top="134" Width="287.28" Height="22">
+      <TextObject Name="TxtHeaderName" Left="0" Top="2" Width="135" Height="16" Text="Məhsul" Font="Arial, 8.5pt, style=Bold"/>
+      <TextObject Name="TxtHeaderQty" Left="135" Top="2" Width="40" Height="16" Text="Miq." Font="Arial, 8.5pt, style=Bold" HorzAlign="Center"/>
+      <TextObject Name="TxtHeaderPrice" Left="175" Top="2" Width="50" Height="16" Text="Qiy." Font="Arial, 8.5pt, style=Bold" HorzAlign="Right"/>
+      <TextObject Name="TxtHeaderTotal" Left="225" Top="2" Width="62.28" Height="16" Text="Cəmi" Font="Arial, 8.5pt, style=Bold" HorzAlign="Right"/>
+      <LineObject Name="LineCols" Left="0" Top="20" Width="287.28"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="160" Width="287.28" Height="20" DataSource="OrderTransactions">
+      <TextObject Name="TxtItemName" Left="0" Top="2" Width="135" Height="16" Text="[OrderTransactions.MenuItemText]" Font="Arial, 8.5pt"/>
+      <TextObject Name="TxtQty" Left="135" Top="2" Width="40" Height="16" Text="[OrderTransactions.Quantity]" Font="Arial, 8.5pt" HorzAlign="Center" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0"/>
+      <TextObject Name="TxtPrice" Left="175" Top="2" Width="50" Height="16" Text="[OrderTransactions.MenuItemUnitPrice]" Font="Arial, 8.5pt" HorzAlign="Right" Format="Custom" Format.Format="0.00"/>
+      <TextObject Name="TxtTotal" Left="225" Top="2" Width="62.28" Height="16" Text="[OrderTransactions.ExtendedPrice]" Font="Arial, 8.5pt" HorzAlign="Right" Format="Custom" Format.Format="0.00"/>
+    </DataBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="184" Width="287.28" Height="110">
+      <LineObject Name="LineSum" Left="0" Top="2" Width="287.28"/>
+      <TextObject Name="TxtGrandTotal" Left="0" Top="10" Width="287.28" Height="24" Text="CƏMİ : [GrandTotal] AZN" Font="Arial, 12pt, style=Bold" HorzAlign="Center"/>
+      <LineObject Name="LineBottom" Left="0" Top="38" Width="287.28" Style="Dash"/>
+      <TextObject Name="TxtNotes" Left="0" Top="44" Width="287.28" Height="16" Text="[OrderNotes]" Font="Arial, 8pt, style=Italic" HorzAlign="Center"/>
+      <TextObject Name="TxtThanks" Left="0" Top="62" Width="287.28" Height="20" Text="TƏŞƏKKÜR EDİRİK!" Font="Arial, 9.5pt, style=Bold" HorzAlign="Center"/>
+      <TextObject Name="TxtPhone" Left="0" Top="84" Width="287.28" Height="16" Text="[PhoneInfo]" Font="Arial, 8pt, style=Italic" HorzAlign="Center"/>
+    </ReportSummaryBand>
+  </ReportPage>
+</Report>

@@ -351,6 +351,36 @@ public class StationSettingsService
                 Kitchen10PrinterName = @Kitchen10PrinterName,
                 Kitchen10PrinterID = @Kitchen10PrinterID,
                 Kitchen10DesignPath = @Kitchen10DesignPath,
+                Kitchen11PrinterName = @Kitchen11PrinterName,
+                Kitchen11PrinterID = @Kitchen11PrinterID,
+                Kitchen11DesignPath = @Kitchen11DesignPath,
+                Kitchen12PrinterName = @Kitchen12PrinterName,
+                Kitchen12PrinterID = @Kitchen12PrinterID,
+                Kitchen12DesignPath = @Kitchen12DesignPath,
+                Kitchen13PrinterName = @Kitchen13PrinterName,
+                Kitchen13PrinterID = @Kitchen13PrinterID,
+                Kitchen13DesignPath = @Kitchen13DesignPath,
+                Kitchen14PrinterName = @Kitchen14PrinterName,
+                Kitchen14PrinterID = @Kitchen14PrinterID,
+                Kitchen14DesignPath = @Kitchen14DesignPath,
+                Kitchen15PrinterName = @Kitchen15PrinterName,
+                Kitchen15PrinterID = @Kitchen15PrinterID,
+                Kitchen15DesignPath = @Kitchen15DesignPath,
+                Kitchen16PrinterName = @Kitchen16PrinterName,
+                Kitchen16PrinterID = @Kitchen16PrinterID,
+                Kitchen16DesignPath = @Kitchen16DesignPath,
+                Kitchen17PrinterName = @Kitchen17PrinterName,
+                Kitchen17PrinterID = @Kitchen17PrinterID,
+                Kitchen17DesignPath = @Kitchen17DesignPath,
+                Kitchen18PrinterName = @Kitchen18PrinterName,
+                Kitchen18PrinterID = @Kitchen18PrinterID,
+                Kitchen18DesignPath = @Kitchen18DesignPath,
+                Kitchen19PrinterName = @Kitchen19PrinterName,
+                Kitchen19PrinterID = @Kitchen19PrinterID,
+                Kitchen19DesignPath = @Kitchen19DesignPath,
+                Kitchen20PrinterName = @Kitchen20PrinterName,
+                Kitchen20PrinterID = @Kitchen20PrinterID,
+                Kitchen20DesignPath = @Kitchen20DesignPath,
                 InvoiceRowCount = @InvoiceRowCount,
                 InvoiceTopFeed = @InvoiceTopFeed,
                 AdditionRowCount = @AdditionRowCount,
@@ -414,6 +444,39 @@ public class StationSettingsService
         return await connection.QueryAsync<Printer>(sql);
     }
 
+    public async Task<IEnumerable<Printer>> SyncInstalledPrintersAsync(IEnumerable<string> installedPrinters)
+    {
+        using var connection = _db.CreateConnection();
+        var allDbPrinters = (await GetPrintersAsync()).ToList();
+        var existingNames = new HashSet<string>(allDbPrinters.Select(p => p.PrinterName ?? string.Empty), StringComparer.OrdinalIgnoreCase);
+
+        int maxId = allDbPrinters.Count > 0 ? allDbPrinters.Max(p => p.PrinterID) : 0;
+
+        foreach (var printerName in installedPrinters)
+        {
+            if (!string.IsNullOrWhiteSpace(printerName) && !existingNames.Contains(printerName))
+            {
+                maxId++;
+                const string insertSql = @"
+                    INSERT INTO [Printers] ([PrinterID], [PrinterName], [EditKey], [SyncKey])
+                    VALUES (@PrinterID, @PrinterName, NEWID(), NEWID());
+                ";
+                await connection.ExecuteAsync(insertSql, new { PrinterID = maxId, PrinterName = printerName });
+                existingNames.Add(printerName);
+            }
+        }
+
+        var reloaded = (await GetPrintersAsync()).ToList();
+        var installedSet = new HashSet<string>(installedPrinters, StringComparer.OrdinalIgnoreCase);
+
+        var result = reloaded
+            .Where(p => !string.IsNullOrWhiteSpace(p.PrinterName) && installedSet.Contains(p.PrinterName))
+            .OrderBy(p => p.PrinterName)
+            .ToList();
+
+        return result.Count > 0 ? result : reloaded;
+    }
+
     public async Task<IEnumerable<PrinterDesign>> GetPrinterDesignsAsync()
     {
         using var connection = _db.CreateConnection();
@@ -429,6 +492,114 @@ public class StationSettingsService
             FROM [PrinterDesigns]
             ORDER BY [DocumentTypeID], [DesignName];
         ";
-        return await connection.QueryAsync<PrinterDesign>(sql);
+        var rows = await connection.QueryAsync(sql);
+        var list = new List<PrinterDesign>();
+        foreach (var r in rows)
+        {
+            string? text = null;
+            if (r.DesignData is byte[] b)
+            {
+                text = System.Text.Encoding.UTF8.GetString(b);
+            }
+            else if (r.DesignData is string s)
+            {
+                text = s;
+            }
+
+            list.Add(new PrinterDesign
+            {
+                AutoID = (int)r.AutoID,
+                DesignKey = (string?)r.DesignKey,
+                DocumentTypeID = (int?)r.DocumentTypeID,
+                DesignName = (string?)r.DesignName,
+                DesignData = text,
+                IsDefault = (bool?)r.IsDefault
+            });
+        }
+        return list;
+    }
+
+    public async Task<PrinterDesign?> GetPrinterDesignByNameAsync(string designName)
+    {
+        using var connection = _db.CreateConnection();
+        const string sql = @"
+            SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+            SELECT TOP 1
+                [AutoID], 
+                CAST([DesignKey] AS NVARCHAR(100)) AS [DesignKey], 
+                [DocumentTypeID], 
+                [DesignName], 
+                [DesignData], 
+                [IsDefault]
+            FROM [PrinterDesigns]
+            WHERE [DesignName] = @DesignName;
+        ";
+        var r = await connection.QueryFirstOrDefaultAsync(sql, new { DesignName = designName });
+        if (r == null) return null;
+
+        string? text = null;
+        if (r.DesignData is byte[] b)
+        {
+            text = System.Text.Encoding.UTF8.GetString(b);
+        }
+        else if (r.DesignData is string s)
+        {
+            text = s;
+        }
+
+        return new PrinterDesign
+        {
+            AutoID = (int)r.AutoID,
+            DesignKey = (string?)r.DesignKey,
+            DocumentTypeID = (int?)r.DocumentTypeID,
+            DesignName = (string?)r.DesignName,
+            DesignData = text,
+            IsDefault = (bool?)r.IsDefault
+        };
+    }
+
+    public async Task<bool> SavePrinterDesignAsync(PrinterDesign design)
+    {
+        using var connection = _db.CreateConnection();
+        byte[] dataBytes = !string.IsNullOrEmpty(design.DesignData) 
+            ? System.Text.Encoding.UTF8.GetBytes(design.DesignData) 
+            : Array.Empty<byte>();
+
+        if (design.AutoID > 0)
+        {
+            const string updateSql = @"
+                UPDATE [PrinterDesigns] SET
+                    [DesignName] = @DesignName,
+                    [DesignData] = @DesignData,
+                    [DocumentTypeID] = @DocumentTypeID,
+                    [IsDefault] = @IsDefault,
+                    [EditKey] = NEWID()
+                WHERE [AutoID] = @AutoID;
+            ";
+            var rows = await connection.ExecuteAsync(updateSql, new
+            {
+                design.DesignName,
+                DesignData = dataBytes,
+                design.DocumentTypeID,
+                design.IsDefault,
+                design.AutoID
+            });
+            return rows > 0;
+        }
+        else
+        {
+            const string insertSql = @"
+                INSERT INTO [PrinterDesigns] ([DesignKey], [DocumentTypeID], [DesignName], [DesignData], [IsDefault], [EditKey], [SyncKey])
+                VALUES (NEWID(), @DocumentTypeID, @DesignName, @DesignData, @IsDefault, NEWID(), NEWID());
+            ";
+            var rows = await connection.ExecuteAsync(insertSql, new
+            {
+                design.DocumentTypeID,
+                design.DesignName,
+                DesignData = dataBytes,
+                design.IsDefault
+            });
+            return rows > 0;
+        }
     }
 }

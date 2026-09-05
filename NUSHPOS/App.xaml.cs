@@ -48,6 +48,8 @@ public partial class App : Application
         services.AddTransient<RegisterSessionService>();
         services.AddTransient<SettingsService>();
         services.AddTransient<StationSettingsService>();
+        services.AddTransient<FastReportService>();
+        services.AddTransient<AuthorityService>();
 
         // ViewModels
         services.AddTransient<LoginViewModel>();
@@ -63,6 +65,7 @@ public partial class App : Application
         services.AddTransient<EmployeeSettingsViewModel>();
         services.AddTransient<MenuDesignerViewModel>();
         services.AddTransient<TerminalSettingsViewModel>();
+        services.AddTransient<SecuritySettingsViewModel>();
         services.AddSingleton<MainWindowViewModel>();
     }
 

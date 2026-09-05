@@ -14,6 +14,7 @@
     </UserControl.Background>
              
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
         <converters:ImageFileToSourceConverter x:Key="ImageConverter"/>
         
         <Style x:Key="SolidGradientButtonStyle" TargetType="Button">
@@ -130,10 +131,14 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- TOP PANEL: SERVICES -->
+                <!-- TOP PANEL: SERVICES (Filtered by Station Settings) -->
                 <WrapPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,20">
                     
-                    <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource GreenGradient}" Command="{Binding OpenDineInCommand}">
+                    <!-- MASA SATIŞI -->
+                    <Button Style="{StaticResource SolidGradientButtonStyle}" 
+                            Background="{StaticResource GreenGradient}" 
+                            Command="{Binding OpenDineInCommand}"
+                            Visibility="{Binding ShowDineInButton, Converter={StaticResource BoolToVis}}">
                         <StackPanel>
                             <Grid Height="55" Width="55" Margin="0,0,0,10">
                                 <TextBlock Text="🍽️" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -142,7 +147,11 @@
                         </StackPanel>
                     </Button>
 
-                    <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource BlueGradient}" Command="{Binding OpenTakeAwayCommand}">
+                    <!-- TAKEAWAY / GÖTÜR-APAR -->
+                    <Button Style="{StaticResource SolidGradientButtonStyle}" 
+                            Background="{StaticResource BlueGradient}" 
+                            Command="{Binding OpenTakeAwayCommand}"
+                            Visibility="{Binding ShowTakeOutButton, Converter={StaticResource BoolToVis}}">
                         <StackPanel>
                             <Grid Height="55" Width="55" Margin="0,0,0,10">
                                 <TextBlock Text="🛍️" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -151,7 +160,24 @@
                         </StackPanel>
                     </Button>
 
-                    <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource RedGradient}" Command="{Binding OpenDeliveryCommand}">
+                    <!-- DRIVE-THRU -->
+                    <Button Style="{StaticResource SolidGradientButtonStyle}" 
+                            Background="{StaticResource PurpleGradient}" 
+                            Command="{Binding OpenDriveThruCommand}"
+                            Visibility="{Binding ShowDriveThruButton, Converter={StaticResource BoolToVis}}">
+                        <StackPanel>
+                            <Grid Height="55" Width="55" Margin="0,0,0,10">
+                                <TextBlock Text="🚗" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                            <TextBlock Text="DRIVE-THRU" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- PAKET SATIŞI / ÇATDIRILMA -->
+                    <Button Style="{StaticResource SolidGradientButtonStyle}" 
+                            Background="{StaticResource RedGradient}" 
+                            Command="{Binding OpenDeliveryCommand}"
+                            Visibility="{Binding ShowDeliveryButton, Converter={StaticResource BoolToVis}}">
                         <StackPanel>
                             <Grid Height="55" Width="55" Margin="0,0,0,10">
                                 <TextBlock Text="🛵" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -167,7 +193,12 @@
                 <!-- BOTTOM PANEL: OPERATIONS -->
                 <WrapPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0">
                     
-                    <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource YellowGradient}" Foreground="#1E293B" Command="{Binding OpenRecallCommand}">
+                    <!-- ÇEKLƏRİ GÖR -->
+                    <Button Style="{StaticResource SolidGradientButtonStyle}" 
+                            Background="{StaticResource YellowGradient}" 
+                            Foreground="#1E293B" 
+                            Command="{Binding OpenRecallCommand}"
+                            Visibility="{Binding ShowRecallButton, Converter={StaticResource BoolToVis}}">
                         <StackPanel>
                             <Grid Height="55" Width="55" Margin="0,0,0,10">
                                 <TextBlock Text="🔍" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -176,7 +207,11 @@
                         </StackPanel>
                     </Button>
 
-                    <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource PurpleGradient}">
+                    <!-- KURYER VƏZİYYƏTİ -->
+                    <Button Style="{StaticResource SolidGradientButtonStyle}" 
+                            Background="{StaticResource PurpleGradient}"
+                            Command="{Binding OpenDriverStatusCommand}"
+                            Visibility="{Binding ShowDriverStatusButton, Converter={StaticResource BoolToVis}}">
                         <StackPanel>
                             <Grid Height="55" Width="55" Margin="0,0,0,10">
                                 <TextBlock Text="🏃" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -185,33 +220,7 @@
                         </StackPanel>
                     </Button>
 
-                    <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource BlueGradient}">
-                        <StackPanel>
-                            <Grid Height="55" Width="55" Margin="0,0,0,10">
-                                <TextBlock Text="🔓" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Grid>
-                            <TextBlock Text="KASSANI AÇ" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource BlueGradient}">
-                        <StackPanel>
-                            <Grid Height="55" Width="55" Margin="0,0,0,10">
-                                <TextBlock Text="🔒" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Grid>
-                            <TextBlock Text="KASSANI BAĞLA" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource BlueGradient}">
-                        <StackPanel>
-                            <Grid Height="55" Width="55" Margin="0,0,0,10">
-                                <TextBlock Text="💳" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Grid>
-                            <TextBlock Text="ÖDƏNİŞ VƏ TƏHSİLAT" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
-                        </StackPanel>
-                    </Button>
-
+                    <!-- KASSA GİRİŞ -->
                     <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource GreenGradient}" Command="{Binding OpenCashRegisterInCommand}">
                         <StackPanel>
                             <Grid Height="55" Width="55" Margin="0,0,0,10">
@@ -221,6 +230,7 @@
                         </StackPanel>
                     </Button>
 
+                    <!-- KASSA ÇIXIŞ -->
                     <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource RedGradient}" Command="{Binding CloseCashRegisterCommand}">
                         <StackPanel>
                             <Grid Height="55" Width="55" Margin="0,0,0,10">
@@ -230,7 +240,11 @@
                         </StackPanel>
                     </Button>
 
-                    <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource BlueGradient}" Command="{Binding OpenOperationsCommand}">
+                    <!-- ƏMƏLİYYATLAR -->
+                    <Button Style="{StaticResource SolidGradientButtonStyle}" 
+                            Background="{StaticResource BlueGradient}" 
+                            Command="{Binding OpenOperationsCommand}"
+                            Visibility="{Binding ShowOperationsButton, Converter={StaticResource BoolToVis}}">
                         <StackPanel>
                             <Grid Height="55" Width="55" Margin="0,0,0,10">
                                 <TextBlock Text="📝" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -239,7 +253,11 @@
                         </StackPanel>
                     </Button>
 
-                    <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource BackofficeGradient}" Command="{Binding OpenBackOfficeCommand}">
+                    <!-- BACKOFFICE -->
+                    <Button Style="{StaticResource SolidGradientButtonStyle}" 
+                            Background="{StaticResource BackofficeGradient}" 
+                            Command="{Binding OpenBackOfficeCommand}"
+                            Visibility="{Binding ShowBackOfficeButton, Converter={StaticResource BoolToVis}}">
                         <StackPanel>
                             <Grid Height="55" Width="55" Margin="0,0,0,10">
                                 <TextBlock Text="⚙️" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -248,6 +266,7 @@
                         </StackPanel>
                     </Button>
 
+                    <!-- ÇIXIŞ -->
                     <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource RedGradient}" Command="{Binding LogoutCommand}">
                         <StackPanel>
                             <Grid Height="55" Width="55" Margin="0,0,0,10">

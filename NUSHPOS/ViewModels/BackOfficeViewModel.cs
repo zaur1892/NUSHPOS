@@ -14,6 +14,7 @@ public partial class BackOfficeViewModel : ViewModelBase
 {
     private readonly NavigationService _navigationService;
     private readonly DatabaseService _databaseService;
+    private readonly AuthorityService _authorityService;
 
     [ObservableProperty]
     private string _dbPath = "";
@@ -39,10 +40,14 @@ public partial class BackOfficeViewModel : ViewModelBase
     [ObservableProperty]
     private string _serverName = "TERMSRV";
 
-    public BackOfficeViewModel(NavigationService navigationService, DatabaseService databaseService)
+    public BackOfficeViewModel(
+        NavigationService navigationService, 
+        DatabaseService databaseService,
+        AuthorityService authorityService)
     {
         _navigationService = navigationService;
         _databaseService = databaseService;
+        _authorityService = authorityService;
         Title = "ARXA OFİS";
 
         _ = LoadDashboardDataAsync();
@@ -166,6 +171,19 @@ public partial class BackOfficeViewModel : ViewModelBase
     {
         ActiveSidebarSection = "GenelAyarlar";
         var vm = App.Services.GetService(typeof(TerminalSettingsViewModel)) as TerminalSettingsViewModel;
+        if (vm != null)
+        {
+            vm.RequestClose += () => CurrentSubView = null;
+            CurrentSubView = vm;
+        }
+    }
+
+    [RelayCommand]
+    private async Task OpenSecuritySettings()
+    {
+        if (!await _authorityService.ValidateActionAccessAsync("enterSecuritySettings", "TƏHLÜKƏSİZLİK SAZLAMALARI")) return;
+        ActiveSidebarSection = "GenelAyarlar";
+        var vm = App.Services.GetService(typeof(SecuritySettingsViewModel)) as SecuritySettingsViewModel;
         if (vm != null)
         {
             vm.RequestClose += () => CurrentSubView = null;

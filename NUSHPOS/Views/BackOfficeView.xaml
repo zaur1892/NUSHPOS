@@ -22,6 +22,9 @@
         <DataTemplate DataType="{x:Type viewmodels:MenuDesignerViewModel}">
             <local:MenuDesignerView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:SecuritySettingsViewModel}">
+            <local:SecuritySettingsView />
+        </DataTemplate>
     </UserControl.Resources>
 
     <Grid>
@@ -51,7 +54,8 @@
                     <!-- Sub-items for Ümumi Sazlamalar -->
                     <StackPanel Background="#1b283d" Margin="0,0,0,10">
                         <Button Content="🏢  Müəssisə Sazlamaları" Command="{Binding OpenCompanySettingsCommand}" Height="40" Background="Transparent" Foreground="#ccc" BorderThickness="0" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="12" Cursor="Hand"/>
-                        <Button Content="💻  Terminal Sazlamaları" Command="{Binding OpenTerminalSettingsCommand}" Height="40" Background="#2e4368" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontWeight="Bold" FontSize="12" Cursor="Hand"/>
+                        <Button Content="💻  Terminal Sazlamaları" Command="{Binding OpenTerminalSettingsCommand}" Height="40" Background="Transparent" Foreground="#ccc" BorderThickness="0" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="12" Cursor="Hand"/>
+                        <Button Content="🔐  Təhlükəsizlik Sazlamaları" Command="{Binding OpenSecuritySettingsCommand}" Height="40" Background="#2e4368" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontWeight="Bold" FontSize="12" Cursor="Hand"/>
                     </StackPanel>
 
                     <!-- Main Category Buttons -->

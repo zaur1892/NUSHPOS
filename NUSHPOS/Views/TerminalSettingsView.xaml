@@ -295,7 +295,7 @@
                                               SelectedValue="{Binding PrinterSettings.CheckDesignPath}"
                                               DisplayMemberPath="DesignName"
                                               IsEditable="True"/>
-                                    <Button Grid.Column="3" Content="DİZAYN ET" Command="{Binding DesignReceiptCommand}" Style="{StaticResource SmallActionBtn}" Width="90" Background="#bae6fd" Foreground="#0369a1" FontWeight="Bold"/>
+                                    <Button Grid.Column="3" Content="DİZAYN ET" Command="{Binding DesignReceiptCommand}" CommandParameter="{Binding PrinterSettings.CheckDesignPath}" Style="{StaticResource SmallActionBtn}" Width="90" Background="#bae6fd" Foreground="#0369a1" FontWeight="Bold"/>
                                 </Grid>
 
                                 <!-- PAKET PRİNTERİ -->
@@ -304,6 +304,7 @@
                                         <ColumnDefinition Width="220"/>
                                         <ColumnDefinition Width="200"/>
                                         <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="PAKET PRİNTERİ" Style="{StaticResource SettingLabel}"/>
                                     <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
@@ -317,6 +318,7 @@
                                               SelectedValue="{Binding PrinterSettings.DeliveryDesignPath}"
                                               DisplayMemberPath="DesignName"
                                               IsEditable="True"/>
+                                    <Button Grid.Column="3" Content="DİZAYN ET" Command="{Binding DesignReceiptCommand}" CommandParameter="{Binding PrinterSettings.DeliveryDesignPath}" Style="{StaticResource SmallActionBtn}" Width="90" Background="#bae6fd" Foreground="#0369a1" FontWeight="Bold"/>
                                 </Grid>
 
                                 <!-- 2. PAKET PRİNTERİ -->
@@ -325,6 +327,7 @@
                                         <ColumnDefinition Width="220"/>
                                         <ColumnDefinition Width="200"/>
                                         <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="2. PAKET PRİNTERİ" Style="{StaticResource SettingLabel}"/>
                                     <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
@@ -338,6 +341,7 @@
                                               SelectedValue="{Binding PrinterSettings.DeliveryAltDesignPath}"
                                               DisplayMemberPath="DesignName"
                                               IsEditable="True"/>
+                                    <Button Grid.Column="3" Content="DİZAYN ET" Command="{Binding DesignReceiptCommand}" CommandParameter="{Binding PrinterSettings.DeliveryAltDesignPath}" Style="{StaticResource SmallActionBtn}" Width="90" Background="#bae6fd" Foreground="#0369a1" FontWeight="Bold"/>
                                 </Grid>
 
                                 <!-- RAPOR (POS PRİNTERİ) -->
@@ -346,6 +350,7 @@
                                         <ColumnDefinition Width="220"/>
                                         <ColumnDefinition Width="200"/>
                                         <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="HESABAT ( POS PRİNTERİ )" Style="{StaticResource SettingLabel}"/>
                                     <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
@@ -359,6 +364,7 @@
                                               SelectedValue="{Binding PrinterSettings.ReportDesignPath}"
                                               DisplayMemberPath="DesignName"
                                               IsEditable="True"/>
+                                    <Button Grid.Column="3" Content="DİZAYN ET" Command="{Binding DesignReceiptCommand}" CommandParameter="{Binding PrinterSettings.ReportDesignPath}" Style="{StaticResource SmallActionBtn}" Width="90" Background="#bae6fd" Foreground="#0369a1" FontWeight="Bold"/>
                                 </Grid>
 
                                 <!-- RAPOR (A4 PRİNTERİ) -->
@@ -367,6 +373,7 @@
                                         <ColumnDefinition Width="220"/>
                                         <ColumnDefinition Width="200"/>
                                         <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="HESABAT ( A4 PRİNTERİ )" Style="{StaticResource SettingLabel}"/>
                                     <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
@@ -380,6 +387,7 @@
                                               SelectedValue="{Binding PrinterSettings.ReportA4DesignPath}"
                                               DisplayMemberPath="DesignName"
                                               IsEditable="True"/>
+                                    <Button Grid.Column="3" Content="DİZAYN ET" Command="{Binding DesignReceiptCommand}" CommandParameter="{Binding PrinterSettings.ReportA4DesignPath}" Style="{StaticResource SmallActionBtn}" Width="90" Background="#bae6fd" Foreground="#0369a1" FontWeight="Bold"/>
                                 </Grid>
 
                                 <!-- ETİKET PRİNTERİ -->
@@ -388,6 +396,7 @@
                                         <ColumnDefinition Width="220"/>
                                         <ColumnDefinition Width="200"/>
                                         <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="ETİKET PRİNTERİ" Style="{StaticResource SettingLabel}"/>
                                     <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
@@ -401,6 +410,7 @@
                                               SelectedValue="{Binding PrinterSettings.LabelDesignPath}"
                                               DisplayMemberPath="DesignName"
                                               IsEditable="True"/>
+                                    <Button Grid.Column="3" Content="DİZAYN ET" Command="{Binding DesignReceiptCommand}" CommandParameter="{Binding PrinterSettings.LabelDesignPath}" Style="{StaticResource SmallActionBtn}" Width="90" Background="#bae6fd" Foreground="#0369a1" FontWeight="Bold"/>
                                 </Grid>
 
                                 <!-- XƏRC QƏBZİ (İADƏ) PRİNTERİ -->
@@ -409,6 +419,7 @@
                                         <ColumnDefinition Width="220"/>
                                         <ColumnDefinition Width="200"/>
                                         <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="XƏRC QƏBZİ (İADƏ) PRİNTERİ" Style="{StaticResource SettingLabel}"/>
                                     <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}" Margin="0,0,6,0"
@@ -422,6 +433,7 @@
                                               SelectedValue="{Binding PrinterSettings.ReturnDesignPath}"
                                               DisplayMemberPath="DesignName"
                                               IsEditable="True"/>
+                                    <Button Grid.Column="3" Content="DİZAYN ET" Command="{Binding DesignReceiptCommand}" CommandParameter="{Binding PrinterSettings.ReturnDesignPath}" Style="{StaticResource SmallActionBtn}" Width="90" Background="#bae6fd" Foreground="#0369a1" FontWeight="Bold"/>
                                 </Grid>
                             </StackPanel>
                         </ScrollViewer>
@@ -471,6 +483,21 @@
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn>
+                                            <DataGridTemplateColumn Header="ƏMƏLİYYAT" Width="100">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Button Content="DİZAYN ET" 
+                                                                Command="{Binding DataContext.DesignReceiptCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                                CommandParameter="{Binding DesignPath}" 
+                                                                Style="{StaticResource SmallActionBtn}" 
+                                                                Height="24"
+                                                                FontSize="10"
+                                                                Background="#bae6fd" 
+                                                                Foreground="#0369a1" 
+                                                                FontWeight="Bold"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
                                         </DataGrid.Columns>
                                     </DataGrid>
                                 </TabItem>
@@ -512,6 +539,21 @@
                                                                   DisplayMemberPath="DesignName"
                                                                   IsEditable="True"
                                                                   Height="26"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTemplateColumn Header="ƏMƏLİYYAT" Width="100">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Button Content="DİZAYN ET" 
+                                                                Command="{Binding DataContext.DesignReceiptCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                                CommandParameter="{Binding DesignPath}" 
+                                                                Style="{StaticResource SmallActionBtn}" 
+                                                                Height="24"
+                                                                FontSize="10"
+                                                                Background="#bae6fd" 
+                                                                Foreground="#0369a1" 
+                                                                FontWeight="Bold"/>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn>

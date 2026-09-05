@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="2026-09-05 00:00:00" ReportInfo.Modified="2026-09-05 00:00:00" ReportInfo.CreatorVersion="2026.2.3.0">
+  <Dictionary>
+    <TableDataSource Name="OrderTransactions" ReferenceName="OrderTransactions" DataType="System.Int32" Enabled="true">
+      <Column Name="MenuItemText" DataType="System.String"/>
+      <Column Name="Quantity" DataType="System.Decimal"/>
+      <Column Name="MenuItemUnitPrice" DataType="System.Decimal"/>
+      <Column Name="ExtendedPrice" DataType="System.Decimal"/>
+      <Column Name="Notes" DataType="System.String"/>
+      <Column Name="DisplayText" DataType="System.String"/>
+      <Column Name="AddDateTime" DataType="System.DateTime"/>
+    </TableDataSource>
+    <Parameter Name="Title" DataType="System.String" Expression="&quot;MƏTBƏX SİFARİŞİ&quot;"/>
+    <Parameter Name="OrderID" DataType="System.String" Expression="&quot;5296&quot;"/>
+    <Parameter Name="ReceiptDate" DataType="System.String" Expression="&quot;05.09.2026&quot;"/>
+    <Parameter Name="ReceiptTime" DataType="System.String" Expression="&quot;00:45:00&quot;"/>
+    <Parameter Name="WaiterName" DataType="System.String" Expression="&quot;Kassir&quot;"/>
+    <Parameter Name="TableName" DataType="System.String" Expression="&quot;MASA 1&quot;"/>
+    <Parameter Name="GuestNumber" DataType="System.Int32" Expression="2"/>
+    <Parameter Name="OrderNotes" DataType="System.String" Expression="&quot;&quot;"/>
+  </Dictionary>
+  <ReportPage Name="Page1" PaperWidth="80" PaperHeight="297" LeftMargin="2" TopMargin="2" RightMargin="2" BottomMargin="2" FirstPageSource="1" OtherPagesSource="1">
+    <ReportTitleBand Name="ReportTitle1" Width="287.28" Height="145">
+      <TextObject Name="TxtTitle" Left="0" Top="5" Width="287.28" Height="26" Text="[Title]" Font="Arial, 13pt, style=Bold" HorzAlign="Center"/>
+      <LineObject Name="LineTop" Left="0" Top="33" Width="287.28"/>
+      <TextObject Name="TxtOrderID" Left="0" Top="38" Width="287.28" Height="18" Text="ÇEK №: [OrderID]" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="TxtDate" Left="0" Top="58" Width="287.28" Height="16" Text="Tarix: [ReceiptDate]" Font="Arial, 9pt"/>
+      <TextObject Name="TxtTime" Left="0" Top="75" Width="287.28" Height="16" Text="Sifariş Saatı: [ReceiptTime]" Font="Arial, 9pt"/>
+      <TextObject Name="TxtWaiter" Left="0" Top="92" Width="287.28" Height="16" Text="Personal: [WaiterName]" Font="Arial, 9pt"/>
+      <TextObject Name="TxtTable" Left="0" Top="110" Width="170" Height="18" Text="Masa: [TableName]" Font="Arial, 11pt, style=Bold"/>
+      <TextObject Name="TxtGuest" Left="170" Top="110" Width="117.28" Height="18" Text="Qonaq: [GuestNumber]" Font="Arial, 9pt" HorzAlign="Right"/>
+      <LineObject Name="LineHeader" Left="0" Top="140" Width="287.28" Style="Solid"/>
+    </ReportTitleBand>
+    <DataBand Name="Data1" Top="150" Width="287.28" Height="28" DataSource="OrderTransactions">
+      <TextObject Name="TxtQty" Left="0" Top="2" Width="35" Height="22" Text="[OrderTransactions.Quantity]" Font="Arial, 12pt, style=Bold" HorzAlign="Left" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0"/>
+      <TextObject Name="TxtItemName" Left="38" Top="2" Width="249.28" Height="22" Text="x  [OrderTransactions.MenuItemText]" Font="Arial, 11pt, style=Bold"/>
+      <LineObject Name="LineItem" Left="0" Top="26" Width="287.28" Style="Dot"/>
+    </DataBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="185" Width="287.28" Height="50">
+      <LineObject Name="LineSum" Left="0" Top="5" Width="287.28"/>
+      <TextObject Name="TxtPrintTime" Left="0" Top="15" Width="287.28" Height="24" Text="SAAT : [ReceiptTime]" Font="Arial, 12pt, style=Bold" HorzAlign="Center"/>
+    </ReportSummaryBand>
+  </ReportPage>
+</Report>

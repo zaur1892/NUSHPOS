@@ -15,6 +15,7 @@ public partial class TablePlanViewModel : ViewModelBase
     private readonly NavigationService _navigationService;
     private readonly TableService _tableService;
     private readonly OrderService _orderService;
+    private readonly AuthorityService _authorityService;
 
     [ObservableProperty]
     private ObservableCollection<DineInTableGroup> _tableGroups = new();
@@ -36,11 +37,16 @@ public partial class TablePlanViewModel : ViewModelBase
 
     private DineInTable? _selectedTable;
 
-    public TablePlanViewModel(NavigationService navigationService, TableService tableService, OrderService orderService)
+    public TablePlanViewModel(
+        NavigationService navigationService, 
+        TableService tableService, 
+        OrderService orderService,
+        AuthorityService authorityService)
     {
         _navigationService = navigationService;
         _tableService = tableService;
         _orderService = orderService;
+        _authorityService = authorityService;
         Title = "Masa Satışı";
         _ = LoadDataAsync();
     }
@@ -122,10 +128,13 @@ public partial class TablePlanViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void SelectTable(TableViewModel tableVm)
+    private async Task SelectTable(TableViewModel tableVm)
     {
         if (tableVm.Status == 0) // Empty table
         {
+            if (!await _authorityService.ValidateActionAccessAsync("enterTableButton", "MASAYA GİRİŞ"))
+                return;
+
             _selectedTable = tableVm.Table;
             GuestCount = 2;
             GuestCountText = "2";
@@ -133,6 +142,14 @@ public partial class TablePlanViewModel : ViewModelBase
         }
         else // Occupied table - go to existing order
         {
+            // If table belongs to another employee, validate authority
+            if (!string.IsNullOrWhiteSpace(tableVm.EmployeeName) && 
+                !string.Equals(tableVm.EmployeeName, SessionManager.EmployeeName, StringComparison.OrdinalIgnoreCase))
+            {
+                if (!await _authorityService.ValidateActionAccessAsync("enterToOtherEmployeeOrder", "BAŞQA PERSONALIN AÇDIĞI ÇEKƏ GİRİŞ"))
+                    return;
+            }
+
             _navigationService.NavigateTo<SaleScreenViewModel>(new { OrderType = 1, TableId = tableVm.Table!.DineInTableID, OrderId = tableVm.OrderId, OrderKey = tableVm.OrderKey });
         }
     }

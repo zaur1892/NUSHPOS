@@ -15,6 +15,7 @@ namespace NUSHPOS.ViewModels;
 public partial class TerminalSettingsViewModel : ViewModelBase
 {
     private readonly StationSettingsService _settingsService;
+    private readonly FastReportService _fastReportService;
 
     [ObservableProperty]
     private bool _isLoading;
@@ -102,9 +103,10 @@ public partial class TerminalSettingsViewModel : ViewModelBase
 
     public event Action? RequestClose;
 
-    public TerminalSettingsViewModel(StationSettingsService settingsService)
+    public TerminalSettingsViewModel(StationSettingsService settingsService, FastReportService fastReportService)
     {
         _settingsService = settingsService;
+        _fastReportService = fastReportService;
         Title = "TERMİNAL PARAMETRLƏRİ";
 
         _ = LoadSettingsAsync();
@@ -130,7 +132,8 @@ public partial class TerminalSettingsViewModel : ViewModelBase
             var groups = await _settingsService.GetTableGroupsAsync();
             TableGroups = new ObservableCollection<DineInTableGroup>(groups);
 
-            var printersList = await _settingsService.GetPrintersAsync();
+            var installed = GetInstalledWindowsPrinters();
+            var printersList = await _settingsService.SyncInstalledPrintersAsync(installed);
             Printers = new ObservableCollection<Printer>(printersList);
 
             var designs = await _settingsService.GetPrinterDesignsAsync();
@@ -146,6 +149,41 @@ public partial class TerminalSettingsViewModel : ViewModelBase
         {
             IsLoading = false;
         }
+    }
+
+    private static List<string> GetInstalledWindowsPrinters()
+    {
+        var installed = new List<string>();
+        try
+        {
+            foreach (string pName in System.Drawing.Printing.PrinterSettings.InstalledPrinters)
+            {
+                if (!string.IsNullOrWhiteSpace(pName) && !installed.Contains(pName, StringComparer.OrdinalIgnoreCase))
+                {
+                    installed.Add(pName);
+                }
+            }
+        }
+        catch { }
+
+        if (installed.Count == 0)
+        {
+            try
+            {
+                using var printServer = new System.Printing.LocalPrintServer();
+                var printQueues = printServer.GetPrintQueues();
+                foreach (var pq in printQueues)
+                {
+                    if (!string.IsNullOrWhiteSpace(pq.Name) && !installed.Contains(pq.Name, StringComparer.OrdinalIgnoreCase))
+                    {
+                        installed.Add(pq.Name);
+                    }
+                }
+            }
+            catch { }
+        }
+
+        return installed;
     }
 
     private void PopulateKitchenSlots()
@@ -184,9 +222,23 @@ public partial class TerminalSettingsViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void DesignReceipt()
+    private async Task DesignReceiptAsync(object? parameter)
     {
-        MessageBox.Show("Qəbz Dizayn Redaktoru açılır...", "Dizayn Et", MessageBoxButton.OK, MessageBoxImage.Information);
+        string designName = parameter?.ToString() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(designName))
+        {
+            designName = "Qəbz Dizaynı";
+        }
+
+        var vm = new DesignEditorViewModel(_settingsService, _fastReportService);
+        await vm.InitializeAsync(designName);
+        var win = new Views.DesignEditorWindow(vm);
+        win.Owner = Application.Current?.MainWindow;
+        win.ShowDialog();
+
+        // Reload designs so any new design appears in the comboboxes
+        var designs = await _settingsService.GetPrinterDesignsAsync();
+        PrinterDesigns = new ObservableCollection<PrinterDesign>(designs);
     }
 
     [RelayCommand]
@@ -258,6 +310,7 @@ public partial class TerminalSettingsViewModel : ViewModelBase
     {
         try
         {
+            // Sync kitchen printer slots back to PrinterSettings
             if (KitchenSlotsPage1.Count >= 10)
             {
                 PrinterSettings.Kitchen1PrinterID = KitchenSlotsPage1[0].PrinterID;
@@ -305,6 +358,46 @@ public partial class TerminalSettingsViewModel : ViewModelBase
                 PrinterSettings.Kitchen20PrinterID = KitchenSlotsPage2[9].PrinterID;
                 PrinterSettings.Kitchen20DesignPath = KitchenSlotsPage2[9].DesignPath;
             }
+
+            var printerDict = Printers.Where(p => !string.IsNullOrEmpty(p.PrinterName)).ToDictionary(p => p.PrinterID, p => p.PrinterName!);
+            if (PrinterSettings.CheckPrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.CheckPrinterID.Value, out var chkName))
+                PrinterSettings.CheckPrinterName = chkName;
+            if (PrinterSettings.DeliveryPrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.DeliveryPrinterID.Value, out var delName))
+                PrinterSettings.DeliveryPrinterName = delName;
+            if (PrinterSettings.InvoicePrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.InvoicePrinterID.Value, out var invName))
+                PrinterSettings.InvoicePrinterName = invName;
+            if (PrinterSettings.ReportPrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.ReportPrinterID.Value, out var repName))
+                PrinterSettings.ReportPrinterName = repName;
+            if (PrinterSettings.AdditionPrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.AdditionPrinterID.Value, out var addName))
+                PrinterSettings.AdditionPrinterName = addName;
+            if (PrinterSettings.ReportA4PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.ReportA4PrinterID.Value, out var r4Name))
+                PrinterSettings.ReportA4PrinterName = r4Name;
+            if (PrinterSettings.LabelPrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.LabelPrinterID.Value, out var lblName))
+                PrinterSettings.LabelPrinterName = lblName;
+            if (PrinterSettings.ReturnPrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.ReturnPrinterID.Value, out var retName))
+                PrinterSettings.ReturnPrinterName = retName;
+
+            // Map Kitchen Printer Names
+            if (PrinterSettings.Kitchen1PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen1PrinterID.Value, out var k1)) PrinterSettings.Kitchen1PrinterName = k1;
+            if (PrinterSettings.Kitchen2PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen2PrinterID.Value, out var k2)) PrinterSettings.Kitchen2PrinterName = k2;
+            if (PrinterSettings.Kitchen3PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen3PrinterID.Value, out var k3)) PrinterSettings.Kitchen3PrinterName = k3;
+            if (PrinterSettings.Kitchen4PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen4PrinterID.Value, out var k4)) PrinterSettings.Kitchen4PrinterName = k4;
+            if (PrinterSettings.Kitchen5PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen5PrinterID.Value, out var k5)) PrinterSettings.Kitchen5PrinterName = k5;
+            if (PrinterSettings.Kitchen6PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen6PrinterID.Value, out var k6)) PrinterSettings.Kitchen6PrinterName = k6;
+            if (PrinterSettings.Kitchen7PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen7PrinterID.Value, out var k7)) PrinterSettings.Kitchen7PrinterName = k7;
+            if (PrinterSettings.Kitchen8PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen8PrinterID.Value, out var k8)) PrinterSettings.Kitchen8PrinterName = k8;
+            if (PrinterSettings.Kitchen9PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen9PrinterID.Value, out var k9)) PrinterSettings.Kitchen9PrinterName = k9;
+            if (PrinterSettings.Kitchen10PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen10PrinterID.Value, out var k10)) PrinterSettings.Kitchen10PrinterName = k10;
+            if (PrinterSettings.Kitchen11PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen11PrinterID.Value, out var k11)) PrinterSettings.Kitchen11PrinterName = k11;
+            if (PrinterSettings.Kitchen12PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen12PrinterID.Value, out var k12)) PrinterSettings.Kitchen12PrinterName = k12;
+            if (PrinterSettings.Kitchen13PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen13PrinterID.Value, out var k13)) PrinterSettings.Kitchen13PrinterName = k13;
+            if (PrinterSettings.Kitchen14PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen14PrinterID.Value, out var k14)) PrinterSettings.Kitchen14PrinterName = k14;
+            if (PrinterSettings.Kitchen15PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen15PrinterID.Value, out var k15)) PrinterSettings.Kitchen15PrinterName = k15;
+            if (PrinterSettings.Kitchen16PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen16PrinterID.Value, out var k16)) PrinterSettings.Kitchen16PrinterName = k16;
+            if (PrinterSettings.Kitchen17PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen17PrinterID.Value, out var k17)) PrinterSettings.Kitchen17PrinterName = k17;
+            if (PrinterSettings.Kitchen18PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen18PrinterID.Value, out var k18)) PrinterSettings.Kitchen18PrinterName = k18;
+            if (PrinterSettings.Kitchen19PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen19PrinterID.Value, out var k19)) PrinterSettings.Kitchen19PrinterName = k19;
+            if (PrinterSettings.Kitchen20PrinterID.HasValue && printerDict.TryGetValue(PrinterSettings.Kitchen20PrinterID.Value, out var k20)) PrinterSettings.Kitchen20PrinterName = k20;
 
             await _settingsService.UpdateStationSettingsAsync(Station);
             await _settingsService.UpdateStationPrinterSettingsAsync(PrinterSettings);
