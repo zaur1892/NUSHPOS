@@ -185,16 +185,16 @@ public class CustomerService
             {
                 const string insertPhoneSql = @"
                     INSERT INTO CustomerPhones (
-                        CustomerKey, PhoneKey, PhoneNumber, PhoneType, BranchID, DateCreated, CustomerIsActive
+                        PhoneKey, CustomerID, CustomerKey, PhoneNumber, CallCounter, SyncKey
                     ) VALUES (
-                        @CustomerKey, @PhoneKey, @PhoneNumber, 1, @BranchID, GETDATE(), 1
+                        @PhoneKey, @CustomerID, @CustomerKey, @PhoneNumber, 0, NEWID()
                     )";
                 await connection.ExecuteAsync(insertPhoneSql, new
                 {
-                    CustomerKey = customer.CustomerKey,
                     PhoneKey = Guid.NewGuid().ToString().ToUpper(),
-                    PhoneNumber = phoneNumber.Trim(),
-                    BranchID = customer.BranchID ?? 1
+                    CustomerID = customer.CustomerID,
+                    CustomerKey = customer.CustomerKey,
+                    PhoneNumber = phoneNumber.Trim()
                 });
             }
         }
@@ -222,7 +222,8 @@ public class CustomerService
                     DiscountPercent = @DiscountPercent,
                     SpecialBonusPercent = @SpecialBonusPercent,
                     EmailAddress = @EmailAddress,
-                    CustomerIsActive = @CustomerIsActive
+                    CustomerIsActive = @CustomerIsActive,
+                    EditDateTime = GETDATE()
                 WHERE CustomerKey = @CustomerKey OR CustomerID = @CustomerID";
 
             await connection.ExecuteAsync(updateCustSql, customer);
@@ -236,16 +237,16 @@ public class CustomerService
                 {
                     const string insertPhoneSql = @"
                         INSERT INTO CustomerPhones (
-                            CustomerKey, PhoneKey, PhoneNumber, PhoneType, BranchID, DateCreated, CustomerIsActive
+                            PhoneKey, CustomerID, CustomerKey, PhoneNumber, CallCounter, SyncKey
                         ) VALUES (
-                            @CustomerKey, @PhoneKey, @PhoneNumber, 1, @BranchID, GETDATE(), 1
+                            @PhoneKey, @CustomerID, @CustomerKey, @PhoneNumber, 0, NEWID()
                         )";
                     await connection.ExecuteAsync(insertPhoneSql, new
                     {
-                        CustomerKey = customer.CustomerKey,
                         PhoneKey = Guid.NewGuid().ToString().ToUpper(),
-                        PhoneNumber = phoneNumber.Trim(),
-                        BranchID = customer.BranchID ?? 1
+                        CustomerID = customer.CustomerID,
+                        CustomerKey = customer.CustomerKey,
+                        PhoneNumber = phoneNumber.Trim()
                     });
                 }
             }

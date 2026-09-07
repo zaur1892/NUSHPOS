@@ -32,27 +32,32 @@
                            VerticalAlignment="Center"/>
             </Border>
 
-            <!-- Display & Backspace (Clean, fully visible, zero clipping) -->
+            <!-- Display & Backspace (Clean, fully visible, razor-sharp) -->
             <Grid Grid.Row="1" Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="75"/>
+                    <ColumnDefinition Width="70"/>
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" Background="#FFFFFF" BorderBrush="#94A3B8" BorderThickness="1.5" CornerRadius="8" Margin="0,0,8,0" Padding="8,4">
-                    <Grid VerticalAlignment="Center">
-                        <TextBox x:Name="txtPhone" 
-                                 Text="{Binding PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 FontSize="26" 
-                                 FontWeight="Bold" 
-                                 Foreground="#0F172A"
-                                 VerticalAlignment="Center"
-                                 VerticalContentAlignment="Center" 
-                                 HorizontalContentAlignment="Center"
-                                 BorderThickness="0" 
-                                 Background="Transparent"
-                                 Focusable="True"/>
-                    </Grid>
+                <Border Grid.Column="0" Background="#FFFFFF" BorderBrush="#0284C7" BorderThickness="2" CornerRadius="8" Margin="0,0,8,0">
+                    <TextBox x:Name="txtPhone" 
+                             FontSize="28" 
+                             FontWeight="Bold" 
+                             Foreground="#0F172A"
+                             CaretBrush="#0284C7"
+                             VerticalAlignment="Center"
+                             VerticalContentAlignment="Center" 
+                             HorizontalContentAlignment="Center"
+                             BorderThickness="0" 
+                             Background="Transparent"
+                             Padding="4,2"
+                             Focusable="True">
+                        <TextBox.Template>
+                            <ControlTemplate TargetType="TextBox">
+                                <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            </ControlTemplate>
+                        </TextBox.Template>
+                    </TextBox>
                 </Border>
 
                 <!-- Backspace Button -->
