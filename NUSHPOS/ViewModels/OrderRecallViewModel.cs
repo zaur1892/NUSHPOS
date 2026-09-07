@@ -120,7 +120,11 @@ namespace NUSHPOS.ViewModels
                     CASE WHEN ISNULL(OrderHeaders.AmountDue, 0.0) = 0 THEN (ISNULL(OrderHeaders.AmountDue, 0.0) + ISNULL((SELECT SUM(AmountPaid) FROM OrderPayments WHERE OrderPayments.OrderKey = OrderHeaders.OrderKey AND ISNULL(OrderPayments.LineDeleted, 0) = 0), 0.0)) ELSE ISNULL(OrderHeaders.AmountDue, 0.0) END AS GrandTotal,
                     OrderHeaders.OrderStatus, 
                     OrderHeaders.OrderType,
-                    ISNULL(OrderHeaders.EmployeeName, '') AS EmployeeName, 
+                    ISNULL(OrderHeaders.EmployeeName, '') AS EmployeeName,
+                    ISNULL(OrderHeaders.DineInTableName, '') AS DineInTableName,
+                    ISNULL(OrderHeaders.CustomerName, '') AS CustomerName,
+                    ISNULL(OrderHeaders.OrderPhone, '') AS OrderPhone,
+                    ISNULL(OrderHeaders.BarTabName, '') AS BarTabName,
                     (CASE OrderHeaders.OrderType 
                         WHEN 1 THEN 'MASA' 
                         WHEN 2 THEN 'BAR SATIŞI' 
@@ -131,8 +135,8 @@ namespace NUSHPOS.ViewModels
                         ELSE '-' 
                      END) AS OrderTypeName,
                     (CASE OrderHeaders.OrderStatus 
-                        WHEN 1 THEN 'AÇIK' 
-                        WHEN 2 THEN 'KAPALI' 
+                        WHEN 1 THEN 'AÇIQ' 
+                        WHEN 2 THEN 'BAĞLI' 
                         WHEN 3 THEN 'İPTAL' 
                         ELSE '-' 
                      END) AS OrderStatusName
@@ -162,7 +166,11 @@ namespace NUSHPOS.ViewModels
                     CASE WHEN ISNULL(OrderHeaders.AmountDue, 0.0) = 0 THEN (ISNULL(OrderHeaders.AmountDue, 0.0) + ISNULL((SELECT SUM(AmountPaid) FROM OrderPayments WHERE OrderPayments.OrderKey = OrderHeaders.OrderKey AND ISNULL(OrderPayments.LineDeleted, 0) = 0), 0.0)) ELSE ISNULL(OrderHeaders.AmountDue, 0.0) END AS GrandTotal,
                     OrderHeaders.OrderStatus, 
                     OrderHeaders.OrderType,
-                    ISNULL(OrderHeaders.EmployeeName, '') AS EmployeeName, 
+                    ISNULL(OrderHeaders.EmployeeName, '') AS EmployeeName,
+                    ISNULL(OrderHeaders.DineInTableName, '') AS DineInTableName,
+                    ISNULL(OrderHeaders.CustomerName, '') AS CustomerName,
+                    ISNULL(OrderHeaders.OrderPhone, '') AS OrderPhone,
+                    ISNULL(OrderHeaders.BarTabName, '') AS BarTabName,
                     (CASE OrderHeaders.OrderType 
                         WHEN 1 THEN 'MASA' 
                         WHEN 2 THEN 'BAR SATIŞI' 
@@ -173,8 +181,8 @@ namespace NUSHPOS.ViewModels
                         ELSE '-' 
                      END) AS OrderTypeName,
                     (CASE OrderHeaders.OrderStatus 
-                        WHEN 1 THEN 'AÇIK' 
-                        WHEN 2 THEN 'KAPALI' 
+                        WHEN 1 THEN 'AÇIQ' 
+                        WHEN 2 THEN 'BAĞLI' 
                         WHEN 3 THEN 'İPTAL' 
                         ELSE '-' 
                      END) AS OrderStatusName
@@ -205,7 +213,11 @@ namespace NUSHPOS.ViewModels
                     CASE WHEN ISNULL(OrderHeaders.AmountDue, 0.0) = 0 THEN (ISNULL(OrderHeaders.AmountDue, 0.0) + ISNULL((SELECT SUM(AmountPaid) FROM OrderPayments WHERE OrderPayments.OrderKey = OrderHeaders.OrderKey AND ISNULL(OrderPayments.LineDeleted, 0) = 0), 0.0)) ELSE ISNULL(OrderHeaders.AmountDue, 0.0) END AS GrandTotal,
                     OrderHeaders.OrderStatus, 
                     OrderHeaders.OrderType,
-                    ISNULL(OrderHeaders.EmployeeName, '') AS EmployeeName, 
+                    ISNULL(OrderHeaders.EmployeeName, '') AS EmployeeName,
+                    ISNULL(OrderHeaders.DineInTableName, '') AS DineInTableName,
+                    ISNULL(OrderHeaders.CustomerName, '') AS CustomerName,
+                    ISNULL(OrderHeaders.OrderPhone, '') AS OrderPhone,
+                    ISNULL(OrderHeaders.BarTabName, '') AS BarTabName,
                     (CASE OrderHeaders.OrderType 
                         WHEN 1 THEN 'MASA' 
                         WHEN 2 THEN 'BAR SATIŞI' 
@@ -216,8 +228,8 @@ namespace NUSHPOS.ViewModels
                         ELSE '-' 
                      END) AS OrderTypeName,
                     (CASE OrderHeaders.OrderStatus 
-                        WHEN 1 THEN 'AÇIK' 
-                        WHEN 2 THEN 'KAPALI' 
+                        WHEN 1 THEN 'AÇIQ' 
+                        WHEN 2 THEN 'BAĞLI' 
                         WHEN 3 THEN 'İPTAL' 
                         ELSE '-' 
                      END) AS OrderStatusName
@@ -246,7 +258,11 @@ namespace NUSHPOS.ViewModels
                     CASE WHEN ISNULL(OrderHeaders.AmountDue, 0.0) = 0 THEN (ISNULL(OrderHeaders.AmountDue, 0.0) + ISNULL((SELECT SUM(AmountPaid) FROM OrderPayments WHERE OrderPayments.OrderKey = OrderHeaders.OrderKey AND ISNULL(OrderPayments.LineDeleted, 0) = 0), 0.0)) ELSE ISNULL(OrderHeaders.AmountDue, 0.0) END AS GrandTotal,
                     OrderHeaders.OrderStatus, 
                     OrderHeaders.OrderType,
-                    ISNULL(OrderHeaders.EmployeeName, '') AS EmployeeName, 
+                    ISNULL(OrderHeaders.EmployeeName, '') AS EmployeeName,
+                    ISNULL(OrderHeaders.DineInTableName, '') AS DineInTableName,
+                    ISNULL(OrderHeaders.CustomerName, '') AS CustomerName,
+                    ISNULL(OrderHeaders.OrderPhone, '') AS OrderPhone,
+                    ISNULL(OrderHeaders.BarTabName, '') AS BarTabName,
                     (CASE OrderHeaders.OrderType 
                         WHEN 1 THEN 'MASA' 
                         WHEN 2 THEN 'BAR SATIŞI' 
@@ -257,8 +273,8 @@ namespace NUSHPOS.ViewModels
                         ELSE '-' 
                      END) AS OrderTypeName,
                     (CASE OrderHeaders.OrderStatus 
-                        WHEN 1 THEN 'AÇIK' 
-                        WHEN 2 THEN 'KAPALI' 
+                        WHEN 1 THEN 'AÇIQ' 
+                        WHEN 2 THEN 'BAĞLI' 
                         WHEN 3 THEN 'İPTAL' 
                         ELSE '-' 
                      END) AS OrderStatusName
@@ -317,7 +333,12 @@ namespace NUSHPOS.ViewModels
                 _navigationService.NavigateTo<SaleScreenViewModel>(new 
                 { 
                     OrderId = SelectedOrder.OrderID,
-                    OrderKey = SelectedOrder.OrderKey 
+                    OrderKey = SelectedOrder.OrderKey,
+                    OrderType = SelectedOrder.OrderType,
+                    CustomerName = SelectedOrder.CustomerName ?? "",
+                    OrderPhone = SelectedOrder.OrderPhone ?? "",
+                    BarTabName = SelectedOrder.BarTabName ?? "",
+                    TableName = SelectedOrder.DineInTableName ?? ""
                 });
             }
         }

@@ -12,6 +12,7 @@
     <UserControl.Resources>
         <converters:ZeroToVisibilityConverter x:Key="ZeroToVisibilityConverter"/>
         <converters:StringToColorBrushConverter x:Key="ColorBrushConverter"/>
+        <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
     </UserControl.Resources>
 
     <Grid>
@@ -64,28 +65,48 @@
             </Grid.RowDefinitions>
             
             <!-- Portions -->
-            <Border BorderBrush="#333" BorderThickness="2" Margin="5" Background="Transparent">
+            <Border BorderBrush="#1e2c43" BorderThickness="1.5" Margin="5" Background="#e2e8f0" CornerRadius="6">
                 <WrapPanel Margin="2">
                     <WrapPanel.Resources>
                         <Style TargetType="Button">
-                            <Setter Property="Width" Value="60"/>
-                            <Setter Property="Height" Value="60"/>
+                            <Setter Property="Width" Value="62"/>
+                            <Setter Property="Height" Value="54"/>
                             <Setter Property="Margin" Value="2"/>
-                            <Setter Property="FontSize" Value="26"/>
-                            <Setter Property="Background" Value="#E0E0E0"/>
-                            <Setter Property="BorderThickness" Value="2"/>
-                            <Setter Property="BorderBrush" Value="#888"/>
-                            <Setter Property="Foreground" Value="#333"/>
+                            <Setter Property="FontSize" Value="22"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="Background" Value="#FFFFFF"/>
+                            <Setter Property="BorderThickness" Value="1.5"/>
+                            <Setter Property="BorderBrush" Value="#cbd5e1"/>
+                            <Setter Property="Foreground" Value="#1e293b"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#dbeafe"/>
+                                    <Setter Property="BorderBrush" Value="#3b82f6"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="#bfdbfe"/>
+                                </Trigger>
+                            </Style.Triggers>
                         </Style>
                     </WrapPanel.Resources>
-                    <Button Content="0,5" />
-                    <Button Content="1,5" />
-                    <Button Content="2" />
-                    <Button Content="3" />
-                    <Button Content="4" />
-                    <Button Content="5" />
-                    <Button Content="6" />
-                    <Button Content="X" />
+                    <Button Content="0,5" Command="{Binding SetPortionCommand}" CommandParameter="0,5"/>
+                    <Button Content="1,5" Command="{Binding SetPortionCommand}" CommandParameter="1,5"/>
+                    <Button Content="2" Command="{Binding SetPortionCommand}" CommandParameter="2"/>
+                    <Button Content="3" Command="{Binding SetPortionCommand}" CommandParameter="3"/>
+                    <Button Content="4" Command="{Binding SetPortionCommand}" CommandParameter="4"/>
+                    <Button Content="5" Command="{Binding SetPortionCommand}" CommandParameter="5"/>
+                    <Button Content="6" Command="{Binding SetPortionCommand}" CommandParameter="6"/>
+                    <Button Content="X" Command="{Binding SetPortionCommand}" CommandParameter="X" Background="#fee2e2" Foreground="#dc2626" BorderBrush="#fca5a5"/>
                 </WrapPanel>
             </Border>
             
@@ -139,19 +160,30 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel>
-                        <Button Content="MASA SATIŞ" Background="#3399FF" Foreground="White" FontSize="14" FontWeight="Bold" Padding="10,2" HorizontalAlignment="Left" BorderThickness="0"/>
-                        <TextBlock Text="{Binding OrderTypeName, StringFormat=Çek ID: 12 / FİŞ NO : 1}" FontSize="12" Foreground="Black" Margin="0,5,0,0"/>
-                        <TextBlock Text="{Binding TableName, StringFormat=MASA: {0}}" FontSize="12" Foreground="Black"/>
-                        <TextBlock Text="{Binding CustomerName, StringFormat=Müşteri: {0}, FallbackValue='Müşteri :test'}" FontSize="12" Foreground="Black"/>
-                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                            <TextBlock Text="👥" FontSize="20" Foreground="#00A2E8" Margin="0,0,5,0"/>
-                            <TextBlock Text="{Binding GuestCount, StringFormat=Konuk : {0}}" FontSize="18" FontWeight="Bold" Foreground="#00A2E8"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="{Binding OrderTypeName, FallbackValue='MASA SATIŞ', StringFormat='✏️ {0}'}" Background="#3399FF" Foreground="White" FontSize="14" FontWeight="Bold" Padding="12,4" HorizontalAlignment="Left" BorderThickness="0"/>
+                            <Button Content="⬅ GERİ" Command="{Binding GoBackCommand}" Background="#e11d48" Foreground="White" FontSize="13" FontWeight="Bold" Padding="12,4" Margin="8,0,0,0" BorderThickness="0" Cursor="Hand">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="4"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                        </StackPanel>
+                        <TextBlock Text="{Binding OrderId, StringFormat='Çek ID: {0}'}" FontSize="12" Foreground="Black" Margin="0,4,0,0"/>
+                        <TextBlock Text="{Binding TableName, StringFormat='MASA: {0}'}" FontSize="12" Foreground="Black" Visibility="{Binding TableName, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter=Inverted}"/>
+                        <TextBlock Text="{Binding CustomerName, StringFormat='Müştəri : {0}'}" FontSize="12" FontWeight="Bold" Foreground="#0F172A" Visibility="{Binding CustomerName, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter=Inverted}"/>
+                        <TextBlock Text="{Binding OrderPhone, StringFormat='Telefon : {0}'}" FontSize="12" FontWeight="SemiBold" Foreground="#334155" Visibility="{Binding OrderPhone, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter=Inverted}"/>
+                        <TextBlock Text="{Binding BarTabName, StringFormat='Gözlənilən : {0}'}" FontSize="12" FontWeight="Bold" Foreground="#0284C7" Visibility="{Binding BarTabName, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter=Inverted}"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0" Visibility="{Binding TableName, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter=Inverted}">
+                            <TextBlock Text="👥" FontSize="18" Foreground="#00A2E8" Margin="0,0,5,0"/>
+                            <TextBlock Text="{Binding GuestCount, StringFormat='Qonaq : {0}'}" FontSize="16" FontWeight="Bold" Foreground="#00A2E8"/>
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Grid.Column="1" HorizontalAlignment="Right">
-                        <TextBlock Text="ROBOTPOS" FontSize="12" Foreground="Black" HorizontalAlignment="Right"/>
+                        <TextBlock Text="NUSHPOS" FontSize="12" FontWeight="Bold" Foreground="#005B96" HorizontalAlignment="Right"/>
                         <TextBlock Text="{Binding CurrentDate, StringFormat='dd.MM.yyyy HH:mm'}" FontSize="12" Foreground="Black" HorizontalAlignment="Right"/>
-                        <TextBlock Text="TERMİNAL : 1" FontSize="12" Foreground="Black" HorizontalAlignment="Right"/>
+                        <TextBlock Text="{Binding EmployeeName, StringFormat='Kassir: {0}'}" FontSize="11" Foreground="#475569" HorizontalAlignment="Right"/>
                     </StackPanel>
                 </Grid>
 
@@ -300,10 +332,30 @@
                     <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1.5*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Content="YAZDIR" Command="{Binding PrintGuestCheckCommand}" Margin="2" Background="#F39C12" Foreground="White" MinHeight="40" FontWeight="Bold"/>
-                        <Button Grid.Column="1" Content="TAMAM" Command="{Binding SaveOrderCommand}" Margin="2" Background="#00A2E8" Foreground="White" FontWeight="Bold" FontSize="18" MinHeight="40"/>
+                        <Button Grid.Column="0" Content="GERİ" Command="{Binding GoBackCommand}" Margin="2" Background="#e11d48" Foreground="White" MinHeight="42" FontWeight="Bold" FontSize="14" Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="4"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                        <Button Grid.Column="1" Content="HESAB YAZDIR" Command="{Binding PrintGuestCheckCommand}" Margin="2" Background="#F39C12" Foreground="White" MinHeight="42" FontWeight="Bold" FontSize="13" Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="4"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                        <Button Grid.Column="2" Content="TAMAM" Command="{Binding SaveOrderCommand}" Margin="2" Background="#00A2E8" Foreground="White" FontWeight="Bold" FontSize="16" MinHeight="42" Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="4"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
                     </Grid>
                 </Grid>
             </Grid>

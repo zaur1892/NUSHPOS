@@ -1,0 +1,500 @@
+<Window x:Class="NUSHPOS.Views.Dialogs.CustomerCardDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Müştəri Kartı"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Width="1040" Height="710">
+
+    <!-- Outer Window Card -->
+    <Border Background="#F8FAFC" BorderBrush="#0284C7" BorderThickness="2" CornerRadius="12">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" Opacity="0.25" BlurRadius="20" ShadowDepth="6"/>
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="42"/>  <!-- Window Title Bar -->
+                <RowDefinition Height="38"/>  <!-- Tabs -->
+                <RowDefinition Height="*"/>   <!-- Form + Stats -->
+                <RowDefinition Height="Auto"/> <!-- Action Bar -->
+                <RowDefinition Height="185"/> <!-- Virtual Keyboard -->
+            </Grid.RowDefinitions>
+
+            <!-- Window Header -->
+            <Border Grid.Row="0" Background="#0F172A" CornerRadius="10,10,0,0" Padding="16,0">
+                <Grid VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="👤" FontSize="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="MÜŞTƏRİ KARTI VƏ ÇATDIRILMA DETALLARI" FontSize="15" FontWeight="Bold" Foreground="#F8FAFC" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <Button Content="✕" Width="28" Height="28" HorizontalAlignment="Right" Background="Transparent" Foreground="#F87171" FontWeight="Bold" FontSize="18" BorderThickness="0" Click="BtnCancel_Click" Cursor="Hand"/>
+                </Grid>
+            </Border>
+
+            <!-- Tabs in Azerbaijani -->
+            <Border Grid.Row="1" Background="#E2E8F0" BorderBrush="#CBD5E1" BorderThickness="0,0,0,1">
+                <StackPanel Orientation="Horizontal" Margin="6,2">
+                    <Button Content="MÜŞTƏRİ MƏLUMATLARI" Background="#FFFFFF" BorderBrush="#0284C7" BorderThickness="1,1,1,0" Foreground="#0369A1" FontWeight="Bold" FontSize="12" Padding="12,4" Margin="2,0"/>
+                    <Button Content="ƏVVƏLKİ SİFARİŞLƏR" Background="#F1F5F9" BorderBrush="#CBD5E1" BorderThickness="1" Foreground="#475569" FontWeight="SemiBold" FontSize="12" Padding="12,4" Margin="2,0"/>
+                    <Button Content="DAİMİ MÜŞTƏRİ" Background="#F1F5F9" BorderBrush="#CBD5E1" BorderThickness="1" Foreground="#475569" FontWeight="SemiBold" FontSize="12" Padding="12,4" Margin="2,0"/>
+                    <Button Content="FAKTURA MƏLUMATLARI" Background="#F1F5F9" BorderBrush="#CBD5E1" BorderThickness="1" Foreground="#475569" FontWeight="SemiBold" FontSize="12" Padding="12,4" Margin="2,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Center Content: Form + Phones + Analytics -->
+            <Grid Grid.Row="2" Margin="12,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="350"/> <!-- Left: Name & Address -->
+                    <ColumnDefinition Width="260"/> <!-- Mid: Phones & Notes -->
+                    <ColumnDefinition Width="*"/>   <!-- Right: Analytics -->
+                </Grid.ColumnDefinitions>
+
+                <!-- LEFT: Name & Address Form -->
+                <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Margin="0,0,8,0">
+                    <StackPanel>
+                        <!-- AD SOYAD -->
+                        <TextBlock Text="MÜŞTƏRİ ADI VƏ SOYADI" FontSize="11" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,2"/>
+                        <TextBox x:Name="txtCustomerName" 
+                                 Text="{Binding CustomerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 Background="#FEF9C3" 
+                                 BorderBrush="#CA8A04" 
+                                 BorderThickness="1.5"
+                                 FontSize="14" 
+                                 FontWeight="Bold" 
+                                 Padding="6,4" 
+                                 Margin="0,0,0,6"
+                                 GotFocus="TextBox_GotFocus"/>
+
+                        <!-- ŞƏHƏR / RAYON -->
+                        <TextBlock Text="ŞƏHƏR / RAYON" FontSize="10" FontWeight="Bold" Foreground="#475569" Margin="0,0,0,2"/>
+                        <TextBox x:Name="txtDistrict" 
+                                 Text="{Binding District, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 Background="White" 
+                                 BorderBrush="#94A3B8" 
+                                 FontSize="12" 
+                                 Padding="5,3" 
+                                 Margin="0,0,0,4"
+                                 GotFocus="TextBox_GotFocus"/>
+
+                        <!-- MƏHƏLLƏ / QƏSƏBƏ -->
+                        <TextBlock Text="MƏHƏLLƏ / QƏSƏBƏ" FontSize="10" FontWeight="Bold" Foreground="#475569" Margin="0,0,0,2"/>
+                        <TextBox x:Name="txtNeighborhood" 
+                                 Text="{Binding Neighborhood, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 Background="White" 
+                                 BorderBrush="#94A3B8" 
+                                 FontSize="12" 
+                                 Padding="5,3" 
+                                 Margin="0,0,0,4"
+                                 GotFocus="TextBox_GotFocus"/>
+
+                        <!-- KÜÇƏ / PROSPEKT -->
+                        <TextBlock Text="KÜÇƏ / PROSPEKT" FontSize="10" FontWeight="Bold" Foreground="#475569" Margin="0,0,0,2"/>
+                        <TextBox x:Name="txtStreet" 
+                                 Text="{Binding Street, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 Background="White" 
+                                 BorderBrush="#94A3B8" 
+                                 FontSize="12" 
+                                 Padding="5,3" 
+                                 Margin="0,0,0,4"
+                                 GotFocus="TextBox_GotFocus"/>
+
+                        <!-- BİNA NO & MƏNZİL NO -->
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,3,0">
+                                <TextBlock Text="BİNA NO" FontSize="10" FontWeight="Bold" Foreground="#475569" Margin="0,0,0,2"/>
+                                <TextBox x:Name="txtBuildings" 
+                                         Text="{Binding Buildings, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                         Background="White" 
+                                         BorderBrush="#94A3B8" 
+                                         FontSize="12" 
+                                         Padding="5,3"
+                                         GotFocus="TextBox_GotFocus"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="3,0,0,0">
+                                <TextBlock Text="MƏNZİL NO" FontSize="10" FontWeight="Bold" Foreground="#475569" Margin="0,0,0,2"/>
+                                <TextBox x:Name="txtFlatNo" 
+                                         Text="{Binding FlatNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                         Background="White" 
+                                         BorderBrush="#94A3B8" 
+                                         FontSize="12" 
+                                         Padding="5,3"
+                                         GotFocus="TextBox_GotFocus"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- SİTE / BLOK -->
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,3,0">
+                                <TextBlock Text="YAŞAYIŞ KOMPLEKSİ" FontSize="10" FontWeight="Bold" Foreground="#475569" Margin="0,0,0,2"/>
+                                <TextBox x:Name="txtApartment" 
+                                         Text="{Binding Apartment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                         Background="White" 
+                                         BorderBrush="#94A3B8" 
+                                         FontSize="12" 
+                                         Padding="5,3"
+                                         GotFocus="TextBox_GotFocus"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="3,0,0,0">
+                                <TextBlock Text="BLOK / GİRİŞ" FontSize="10" FontWeight="Bold" Foreground="#475569" Margin="0,0,0,2"/>
+                                <TextBox x:Name="txtBlock" 
+                                         Text="{Binding Block, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                         Background="White" 
+                                         BorderBrush="#94A3B8" 
+                                         FontSize="12" 
+                                         Padding="5,3"
+                                         GotFocus="TextBox_GotFocus"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- ÜNVAN QEYDİ / TARİF -->
+                        <TextBlock Text="ÜNVAN TƏSVİRİ VƏ QEYDLƏR" FontSize="10" FontWeight="Bold" Foreground="#475569" Margin="0,0,0,2"/>
+                        <TextBox x:Name="txtAddressNotes" 
+                                 Text="{Binding AddressNotes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 Background="White" 
+                                 BorderBrush="#94A3B8" 
+                                 FontSize="12" 
+                                 Height="45" 
+                                 TextWrapping="Wrap" 
+                                 AcceptsReturn="True" 
+                                 Padding="5,3"
+                                 GotFocus="TextBox_GotFocus"/>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- MIDDLE: Phones & Company -->
+                <Grid Grid.Column="1" Margin="4,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="85"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="TELEFON NÖMRƏSİ" FontSize="11" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,2"/>
+                    
+                    <Border Grid.Row="1" Background="#FFFFFF" BorderBrush="#0284C7" BorderThickness="1.5" CornerRadius="6" Padding="6" Margin="0,0,0,8">
+                        <Grid VerticalAlignment="Center">
+                            <TextBox x:Name="txtPhoneDisplay" 
+                                     Text="{Binding DisplayPhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                     FontSize="20" 
+                                     FontWeight="Black" 
+                                     Foreground="#0284C7" 
+                                     BorderThickness="0" 
+                                     VerticalAlignment="Center" 
+                                     HorizontalAlignment="Center"
+                                     GotFocus="TextBox_GotFocus"/>
+                        </Grid>
+                    </Border>
+
+                    <StackPanel Grid.Row="2" Margin="0,0,0,6">
+                        <TextBlock Text="ŞİRKƏT / FİRMA" FontSize="10" FontWeight="Bold" Foreground="#475569" Margin="0,0,0,2"/>
+                        <TextBox x:Name="txtCustomerNotes" 
+                                 Text="{Binding CustomerNotes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 Background="White" 
+                                 BorderBrush="#94A3B8" 
+                                 FontSize="12" 
+                                 Padding="5,3"
+                                 GotFocus="TextBox_GotFocus"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="3">
+                        <TextBlock Text="KART NÖMRƏSİ / MÜŞTƏRİ KODU" FontSize="10" FontWeight="Bold" Foreground="#475569" Margin="0,0,0,2"/>
+                        <TextBox x:Name="txtCardNumber" 
+                                 Text="{Binding CardNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 Background="White" 
+                                 BorderBrush="#94A3B8" 
+                                 FontSize="12" 
+                                 Padding="5,3"
+                                 GotFocus="TextBox_GotFocus"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- RIGHT: Analytics & Spend Stats -->
+                <Border Grid.Column="2" Background="#F1F5F9" BorderBrush="#CBD5E1" BorderThickness="1.5" CornerRadius="8" Padding="12" Margin="6,0,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32"/> <!-- Title: ANALİZ -->
+                            <RowDefinition Height="*"/>  <!-- Stats Grid -->
+                            <RowDefinition Height="Auto"/> <!-- Discount / Credit -->
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="MÜŞTƏRİ ANALİZİ" FontSize="16" FontWeight="Black" Foreground="#0F172A" HorizontalAlignment="Center"/>
+
+                        <Grid Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- ÜMUMİ XƏRC -->
+                            <Border Grid.Row="0" Grid.Column="0" Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Margin="3" Padding="6">
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="ÜMUMİ XƏRC" FontSize="10" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding TotalSpent, StringFormat='{}{0:N2} ₼', FallbackValue='0,00 ₼'}" FontSize="16" FontWeight="Black" Foreground="#0F172A" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- SİFARİŞ SAYI -->
+                            <Border Grid.Row="0" Grid.Column="1" Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Margin="3" Padding="6">
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="SİFARİŞ SAYI" FontSize="10" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding TotalOrders, StringFormat='{}{0} Ədəd', FallbackValue='0 Ədəd'}" FontSize="16" FontWeight="Black" Foreground="#0F172A" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- BORC QALIĞI -->
+                            <Border Grid.Row="1" Grid.Column="0" Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Margin="3" Padding="6">
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="BORC QALIĞI" FontSize="10" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding TotalDebt, StringFormat='{}{0:N2} ₼', FallbackValue='0,00 ₼'}" FontSize="16" FontWeight="Black" Foreground="#DC2626" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- QALIQ BONUS -->
+                            <Border Grid.Row="1" Grid.Column="1" Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Margin="3" Padding="6">
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="QALIQ BONUS" FontSize="10" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding TotalBonusRemaing, StringFormat='{}{0:N2}', FallbackValue='0,00'}" FontSize="16" FontWeight="Black" Foreground="#0284C7" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <Grid Grid.Row="2" Margin="0,6,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Background="#FFFFFF" Padding="6" CornerRadius="6" Margin="3">
+                                <StackPanel>
+                                    <TextBlock Text="XÜSUSİ ENDİRİM" FontSize="9" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding DiscountPercent, StringFormat='{}{0:N0}%', FallbackValue='0%'}" FontSize="14" FontWeight="Bold" Foreground="#0F172A" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="1" Background="#FFFFFF" Padding="6" CornerRadius="6" Margin="3">
+                                <StackPanel>
+                                    <TextBlock Text="NİSYƏ SATIŞ" FontSize="9" FontWeight="Bold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="XEYR" FontSize="14" FontWeight="Bold" Foreground="#0F172A" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Bottom Action Buttons in Azerbaijani -->
+            <Grid Grid.Row="3" Margin="12,2,12,6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="1" Content="İMTİNA" Width="140" Height="44" Background="#EF4444" Foreground="White" FontSize="17" FontWeight="Black" Margin="0,0,10,0" BorderThickness="0" Click="BtnCancel_Click" Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="8" x:Name="bd">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="Opacity" Value="0.88"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button Grid.Column="2" Content="YENİ SİFARİŞ VER" Width="190" Height="44" Background="#10B981" Foreground="White" FontSize="17" FontWeight="Black" BorderThickness="0" Click="BtnStartOrder_Click" Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="8" x:Name="bd">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="Opacity" Value="0.88"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+
+            <!-- Virtual Touch Keyboard -->
+            <Border Grid.Row="4" Background="#334155" CornerRadius="0,0,10,10" Padding="8,6">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/> <!-- QWERTY -->
+                        <ColumnDefinition Width="130"/> <!-- TAMAM Button -->
+                        <ColumnDefinition Width="190"/> <!-- Numeric Numpad -->
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.Resources>
+                        <Style x:Key="KeyBtnStyle" TargetType="Button">
+                            <Setter Property="Background" Value="#F8FAFC"/>
+                            <Setter Property="Foreground" Value="#0F172A"/>
+                            <Setter Property="FontSize" Value="17"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="Margin" Value="2"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" CornerRadius="6" x:Name="keyBd">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="keyBd" Property="Background" Value="#E2E8F0"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="keyBd" Property="Background" Value="#CBD5E1"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Grid.Resources>
+
+                    <!-- QWERTY Area -->
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Row 0: Q W E R T Y U I O P <- -->
+                        <UniformGrid Grid.Row="0" Columns="11">
+                            <Button Content="Q" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="W" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="E" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="R" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="T" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="Y" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="U" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="I" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="O" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="P" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="⌫" Style="{StaticResource KeyBtnStyle}" Background="#64748B" Foreground="White" Click="BtnBackKey_Click"/>
+                        </UniformGrid>
+
+                        <!-- Row 1: A S D F G H J K L @ -->
+                        <UniformGrid Grid.Row="1" Columns="10">
+                            <Button Content="A" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="S" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="D" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="F" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="G" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="H" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="J" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="K" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="L" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="@" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                        </UniformGrid>
+
+                        <!-- Row 2: Z X C V B N M , . SPACE -->
+                        <UniformGrid Grid.Row="2" Columns="10">
+                            <Button Content="Z" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="X" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="C" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="V" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="B" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="N" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="M" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="," Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="." Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="BOŞLUQ" Style="{StaticResource KeyBtnStyle}" Background="#64748B" Foreground="White" FontSize="13" Click="BtnSpace_Click"/>
+                        </UniformGrid>
+
+                        <!-- Row 3: Aa + Azerbaijani Letters (Ə, Ö, Ü, Ş, Ç, Ğ, I) -->
+                        <UniformGrid Grid.Row="3" Columns="8">
+                            <Button Content="Aa" Style="{StaticResource KeyBtnStyle}" Background="#0284C7" Foreground="White" Click="BtnCaps_Click"/>
+                            <Button Content="Ə" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="Ö" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="Ü" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="Ş" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="Ç" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="Ğ" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                            <Button Content="I" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                        </UniformGrid>
+                    </Grid>
+
+                    <!-- Big TAMAM in the Middle -->
+                    <Button Grid.Column="1" 
+                            Content="TAMAM" 
+                            Background="#10B981" 
+                            Foreground="White" 
+                            FontSize="22" 
+                            FontWeight="Black" 
+                            Margin="4,2" 
+                            BorderThickness="0" 
+                            Click="BtnStartOrder_Click"
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="8" x:Name="bd">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="bd" Property="Opacity" Value="0.88"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Numeric Numpad -->
+                    <Grid Grid.Column="2" Margin="2,0,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Row="0" Grid.Column="0" Content="7" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                        <Button Grid.Row="0" Grid.Column="1" Content="8" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                        <Button Grid.Row="0" Grid.Column="2" Content="9" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+
+                        <Button Grid.Row="1" Grid.Column="0" Content="4" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                        <Button Grid.Row="1" Grid.Column="1" Content="5" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                        <Button Grid.Row="1" Grid.Column="2" Content="6" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+
+                        <Button Grid.Row="2" Grid.Column="0" Content="1" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                        <Button Grid.Row="2" Grid.Column="1" Content="2" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                        <Button Grid.Row="2" Grid.Column="2" Content="3" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+
+                        <Button Grid.Row="3" Grid.Column="0" Content="0" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                        <Button Grid.Row="3" Grid.Column="1" Content="00" Style="{StaticResource KeyBtnStyle}" Click="BtnKey_Click"/>
+                        <Button Grid.Row="3" Grid.Column="2" Content="Enter" Style="{StaticResource KeyBtnStyle}" Background="#0284C7" Foreground="White" Click="BtnStartOrder_Click"/>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

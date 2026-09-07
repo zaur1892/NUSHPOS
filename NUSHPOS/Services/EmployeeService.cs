@@ -30,7 +30,8 @@ public class EmployeeService
                 EmployeeTitles.TitleName as JobTitleText
             FROM EmployeeFiles
             LEFT OUTER JOIN EmployeeTitles ON EmployeeFiles.JobTitleID = EmployeeTitles.TitleID
-            WHERE EmployeeFiles.AccessCode = @AccessCode AND ISNULL(EmployeeFiles.EmployeeActive, 0) = 1;";
+            WHERE (EmployeeFiles.AccessCode = @AccessCode OR EmployeeFiles.MifareCardCode = @AccessCode OR EmployeeFiles.SmarCardCode = @AccessCode) 
+              AND ISNULL(EmployeeFiles.EmployeeActive, 0) = 1;";
         return await connection.QueryFirstOrDefaultAsync<Employee>(sql, new { AccessCode = accessCode });
     }
 

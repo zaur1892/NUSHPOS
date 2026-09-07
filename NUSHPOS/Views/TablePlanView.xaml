@@ -133,38 +133,90 @@
 
         <!-- Guest Count Dialog Overlay -->
         <Grid Grid.RowSpan="2" Grid.ColumnSpan="2" Background="#80000000" Visibility="{Binding ShowGuestDialog, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}">
-            <Border Background="{StaticResource SurfaceBrush}" CornerRadius="16" Width="400" Height="500" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Grid Margin="20">
+            <Border Background="White" CornerRadius="16" Width="380" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="20">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Opacity="0.4" BlurRadius="25" ShadowDepth="6"/>
+                </Border.Effect>
+                <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Kişi Sayısı" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20"/>
-                    <TextBlock Grid.Row="0" Text="{Binding GuestCountText}" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,40,0,10"/>
+
+                    <TextBlock Grid.Row="0" Text="Qonaq Sayı" FontSize="20" FontWeight="Bold" Foreground="#1e293b" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     
-                    <UniformGrid Grid.Row="1" Columns="3" Rows="4" Margin="10">
-                        <Button Content="1" Command="{Binding GuestNumpadCommand}" CommandParameter="1" Margin="5"/>
-                        <Button Content="2" Command="{Binding GuestNumpadCommand}" CommandParameter="2" Margin="5"/>
-                        <Button Content="3" Command="{Binding GuestNumpadCommand}" CommandParameter="3" Margin="5"/>
-                        <Button Content="4" Command="{Binding GuestNumpadCommand}" CommandParameter="4" Margin="5"/>
-                        <Button Content="5" Command="{Binding GuestNumpadCommand}" CommandParameter="5" Margin="5"/>
-                        <Button Content="6" Command="{Binding GuestNumpadCommand}" CommandParameter="6" Margin="5"/>
-                        <Button Content="7" Command="{Binding GuestNumpadCommand}" CommandParameter="7" Margin="5"/>
-                        <Button Content="8" Command="{Binding GuestNumpadCommand}" CommandParameter="8" Margin="5"/>
-                        <Button Content="9" Command="{Binding GuestNumpadCommand}" CommandParameter="9" Margin="5"/>
-                        <Button Content="C" Command="{Binding GuestNumpadCommand}" CommandParameter="C" Background="#E74C3C" Margin="5"/>
-                        <Button Content="0" Command="{Binding GuestNumpadCommand}" CommandParameter="0" Margin="5"/>
-                        <Button Content="⌫" Command="{Binding GuestNumpadCommand}" CommandParameter="⌫" Background="#F39C12" Margin="5"/>
+                    <!-- DISPLAY -->
+                    <Border Grid.Row="1" Background="#f8fafc" BorderBrush="#cbd5e1" BorderThickness="1.5" CornerRadius="8" Height="50" Margin="10,5,10,15">
+                        <TextBlock Text="{Binding GuestCountText}" FontSize="30" FontWeight="Bold" Foreground="#0284c7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    
+                    <!-- NUMPAD -->
+                    <UniformGrid Grid.Row="2" Columns="3" Rows="4" Margin="5,0,5,15">
+                        <UniformGrid.Resources>
+                            <Style TargetType="Button">
+                                <Setter Property="Margin" Value="4"/>
+                                <Setter Property="Height" Value="52"/>
+                                <Setter Property="FontSize" Value="22"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Background" Value="#f1f5f9"/>
+                                <Setter Property="Foreground" Value="#1e293b"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                                <Setter Property="BorderBrush" Value="#cbd5e1"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </UniformGrid.Resources>
+                        
+                        <Button Content="1" Command="{Binding GuestNumpadCommand}" CommandParameter="1"/>
+                        <Button Content="2" Command="{Binding GuestNumpadCommand}" CommandParameter="2"/>
+                        <Button Content="3" Command="{Binding GuestNumpadCommand}" CommandParameter="3"/>
+                        <Button Content="4" Command="{Binding GuestNumpadCommand}" CommandParameter="4"/>
+                        <Button Content="5" Command="{Binding GuestNumpadCommand}" CommandParameter="5"/>
+                        <Button Content="6" Command="{Binding GuestNumpadCommand}" CommandParameter="6"/>
+                        <Button Content="7" Command="{Binding GuestNumpadCommand}" CommandParameter="7"/>
+                        <Button Content="8" Command="{Binding GuestNumpadCommand}" CommandParameter="8"/>
+                        <Button Content="9" Command="{Binding GuestNumpadCommand}" CommandParameter="9"/>
+                        <Button Content="C" Command="{Binding GuestNumpadCommand}" CommandParameter="C" Background="#fee2e2" Foreground="#dc2626"/>
+                        <Button Content="0" Command="{Binding GuestNumpadCommand}" CommandParameter="0"/>
+                        <Button Content="⌫" Command="{Binding GuestNumpadCommand}" CommandParameter="⌫" Background="#fef3c7" Foreground="#d97706"/>
                     </UniformGrid>
                     
-                    <Grid Grid.Row="2" Margin="0,20,0,0">
+                    <!-- BOTTOM ACTION BUTTONS -->
+                    <Grid Grid.Row="3" Margin="5,0,5,5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Content="LƏĞV ET" Command="{Binding CancelGuestDialogCommand}" Background="#7F8C8D" Margin="0,0,5,0"/>
-                        <Button Grid.Column="1" Content="TƏSDİQ" Command="{Binding ConfirmGuestsCommand}" Background="#2ECC71" Margin="5,0,0,0"/>
+                        
+                        <Button Grid.Column="0" Content="LƏĞV ET" Command="{Binding CancelGuestDialogCommand}" 
+                                Height="48" Margin="0,0,6,0" Background="#e11d48" Foreground="White" 
+                                FontWeight="Bold" FontSize="15" BorderThickness="0" Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                        
+                        <Button Grid.Column="1" Content="TƏSDİQ ET" Command="{Binding ConfirmGuestsCommand}" 
+                                Height="48" Margin="6,0,0,0" Background="#16a34a" Foreground="White" 
+                                FontWeight="Bold" FontSize="15" BorderThickness="0" Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
                     </Grid>
                 </Grid>
             </Border>

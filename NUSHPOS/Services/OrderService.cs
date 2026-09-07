@@ -57,7 +57,7 @@ public class OrderService
                 DeliveryZoneID, DriverEmployeeID, SalesTaxRate, DiscountID, DiscountLineAmount, DiscountOrderAmount, DiscountCashAmount,
                 DiscountTotalAmount, DiscountAmountValue, DiscountBasisValue, OrderStatus, BonusAmountUsed, BonusAmountEarned,
                 BonusID, BonusCustomerID, AmountDue, SubTotal, OrderCost, GratuityPercent, CashGratuity, SalesTaxAmount,
-                GuestNumber, SpecificCustomerName, OrderPhone, OrderNotes, LineDeleted, DeleteReason, BranchID, AddUserID,
+                GuestNumber, SpecificCustomerName, OrderPhone, BarTabName, TableReady, OrderNotes, LineDeleted, DeleteReason, BranchID, AddUserID,
                 AddDateTime, CustomerKey, DiscountKey, EmployeeKey, EmployeeName, DineInTableName, CustomerName, RoundAmount, EditKey, SyncKey
             )
             VALUES (
@@ -66,7 +66,7 @@ public class OrderService
                 @DeliveryZoneID, @DriverEmployeeID, @SalesTaxRate, @DiscountID, @DiscountLineAmount, @DiscountOrderAmount, @DiscountCashAmount,
                 @DiscountTotalAmount, @DiscountAmountValue, @DiscountBasisValue, @OrderStatus, @BonusAmountUsed, @BonusAmountEarned,
                 @BonusID, @BonusCustomerID, @AmountDue, @SubTotal, @OrderCost, @GratuityPercent, @CashGratuity, @SalesTaxAmount,
-                @GuestNumber, @SpecificCustomerName, @OrderPhone, @OrderNotes, @LineDeleted, @DeleteReason, @BranchID, @AddUserID,
+                @GuestNumber, @SpecificCustomerName, @OrderPhone, @BarTabName, @TableReady, @OrderNotes, @LineDeleted, @DeleteReason, @BranchID, @AddUserID,
                 @AddDateTime, @CustomerKey, @DiscountKey, @EmployeeKey, @EmployeeName, @DineInTableName, @CustomerName, @RoundAmount, @EditKey, @SyncKey
             );
             SELECT CAST(SCOPE_IDENTITY() AS INT);";
@@ -106,6 +106,8 @@ public class OrderService
                 GuestNumber = @GuestNumber,
                 SpecificCustomerName = @SpecificCustomerName,
                 OrderPhone = @OrderPhone,
+                BarTabName = @BarTabName,
+                TableReady = @TableReady,
                 InvoicePrinted = @InvoicePrinted,
                 FiscalPrinted = @FiscalPrinted,
                 OrderNotes = @OrderNotes,
@@ -167,7 +169,8 @@ public class OrderService
                 DiscountTotalAmount, TransactionStatus, NotificationStatus, AdditionLinePrinted,
                 TaxPercent, RoundID, Mod1ID, Mod1Cost, Mod2ID, Mod2Cost, Mod3ID, Mod3Cost, Mod4ID, Mod4Cost,
                 Mod5ID, Mod5Cost, SeatNumber, Notes, SaleTaxAmount, LineDeleted, DeleteReason, BranchID,
-                AddUserID, AddDateTime, EmployeeName, RoundAmount, EditKey, SyncKey
+                AddUserID, AddDateTime, EmployeeName, RoundAmount, EditKey, SyncKey,
+                UsedPrinterID1, UsedPrinterID2, UsedPrinterID3, UsedPrinterID4, UsedPrinterID5
             )
             VALUES (
                 @TransactionDateTime, @TransactionID, @TransactionKey, @OrderKey, @OrderID, @OrderDateTime,
@@ -177,7 +180,8 @@ public class OrderService
                 @DiscountTotalAmount, @TransactionStatus, @NotificationStatus, @AdditionLinePrinted,
                 @TaxPercent, @RoundID, @Mod1ID, @Mod1Cost, @Mod2ID, @Mod2Cost, @Mod3ID, @Mod3Cost, @Mod4ID, @Mod4Cost,
                 @Mod5ID, @Mod5Cost, @SeatNumber, @Notes, @SaleTaxAmount, @LineDeleted, @DeleteReason, @BranchID,
-                @AddUserID, @AddDateTime, @EmployeeName, @RoundAmount, @EditKey, @SyncKey
+                @AddUserID, @AddDateTime, @EmployeeName, @RoundAmount, @EditKey, @SyncKey,
+                @UsedPrinterID1, @UsedPrinterID2, @UsedPrinterID3, @UsedPrinterID4, @UsedPrinterID5
             )";
         await connection.ExecuteAsync(sql, transaction);
     }

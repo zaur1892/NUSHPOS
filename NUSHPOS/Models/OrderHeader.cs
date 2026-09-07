@@ -53,6 +53,8 @@ public class OrderHeader
     public int? GuestNumber { get; set; }
     public string? SpecificCustomerName { get; set; }
     public string? OrderPhone { get; set; }
+    public string? BarTabName { get; set; }
+    public int? TableReady { get; set; }
     public bool? InvoicePrinted { get; set; }
     public bool? AdditionPrinted { get; set; }
     public bool? FiscalPrinted { get; set; }

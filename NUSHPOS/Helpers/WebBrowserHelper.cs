@@ -23,11 +23,27 @@ namespace NUSHPOS.Helpers
         {
             if (d is WebBrowser browser)
             {
+                if (browser.DataContext is ViewModels.ReportTabModel tabModel)
+                {
+                    tabModel.ActiveWebBrowser = browser;
+                }
+
+                browser.DataContextChanged -= Browser_DataContextChanged;
+                browser.DataContextChanged += Browser_DataContextChanged;
+
                 var html = e.NewValue as string;
                 if (!string.IsNullOrWhiteSpace(html))
                 {
                     browser.NavigateToString(html);
                 }
+            }
+        }
+
+        private static void Browser_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is WebBrowser browser && browser.DataContext is ViewModels.ReportTabModel tabModel)
+            {
+                tabModel.ActiveWebBrowser = browser;
             }
         }
     }

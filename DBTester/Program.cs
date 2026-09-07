@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using Dapper;
 
@@ -11,10 +12,10 @@ namespace DBTester
             string connectionString = "Server=TERMSRV;Database=infinia;Trusted_Connection=True;TrustServerCertificate=True;";
             using (var connection = new SqlConnection(connectionString))
             {
-                var colors = connection.Query("SELECT PaymentName, ButtonColor FROM PaymentMethods WHERE PaymentMethodActive = 1");
-                foreach (var color in colors)
+                var designs = connection.Query("SELECT AutoID, DesignName, DocumentTypeID, IsDefault, LEN(CAST(DesignData AS NVARCHAR(MAX))) as DataLen FROM PrinterDesigns");
+                foreach (var d in designs)
                 {
-                    Console.WriteLine($"{color.PaymentName}: {color.ButtonColor} (Type: {(color.ButtonColor != null ? color.ButtonColor.GetType().Name : "null")})");
+                    Console.WriteLine($"ID: {d.AutoID}, Name: {d.DesignName}, Type: {d.DocumentTypeID}, IsDefault: {d.IsDefault}, Len: {d.DataLen}");
                 }
             }
         }

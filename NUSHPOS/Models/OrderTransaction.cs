@@ -64,4 +64,9 @@ public class OrderTransaction
     public decimal? RoundAmount { get; set; }
     public int? EditUserID { get; set; }
     public DateTime? EditDateTime { get; set; }
+    public int? UsedPrinterID1 { get; set; }
+    public int? UsedPrinterID2 { get; set; }
+    public int? UsedPrinterID3 { get; set; }
+    public int? UsedPrinterID4 { get; set; }
+    public int? UsedPrinterID5 { get; set; }
 }

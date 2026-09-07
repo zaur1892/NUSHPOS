@@ -2,10 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Printing;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using FastReport;
+using PDFtoImage;
+using SkiaSharp;
 
 namespace NUSHPOS.Services;
 
@@ -58,37 +63,37 @@ public class FastReportService
     <Parameter Name=""OrderNotes"" DataType=""System.String"" Expression=""&quot;&quot;""/>
     <Parameter Name=""PhoneInfo"" DataType=""System.String"" Expression=""&quot;Tel: (012) 000-00-00&quot;""/>
   </Dictionary>
-  <ReportPage Name=""Page1"" PaperWidth=""80"" PaperHeight=""297"" LeftMargin=""2"" TopMargin=""2"" RightMargin=""2"" BottomMargin=""2"" FirstPageSource=""1"" OtherPagesSource=""1"">
-    <ReportTitleBand Name=""ReportTitle1"" Width=""287.28"" Height=""130"">
-      <TextObject Name=""TxtTitle"" Left=""0"" Top=""5"" Width=""287.28"" Height=""26"" Text=""[RestaurantName]"" Font=""Arial, 13pt, style=Bold"" HorzAlign=""Center""/>
-      <LineObject Name=""LineTop"" Left=""0"" Top=""35"" Width=""287.28""/>
-      <TextObject Name=""TxtOrderID"" Left=""0"" Top=""40"" Width=""287.28"" Height=""16"" Text=""Çek №: [OrderID]"" Font=""Arial, 9pt, style=Bold""/>
-      <TextObject Name=""TxtDate"" Left=""0"" Top=""57"" Width=""287.28"" Height=""16"" Text=""Tarix: [ReceiptDate]"" Font=""Arial, 8.5pt""/>
-      <TextObject Name=""TxtWaiter"" Left=""0"" Top=""74"" Width=""287.28"" Height=""16"" Text=""Personal: [WaiterName]"" Font=""Arial, 8.5pt""/>
-      <TextObject Name=""TxtTable"" Left=""0"" Top=""91"" Width=""170"" Height=""16"" Text=""Masa №: [TableName]"" Font=""Arial, 9pt, style=Bold""/>
-      <TextObject Name=""TxtGuest"" Left=""170"" Top=""91"" Width=""117.28"" Height=""16"" Text=""Qonaq: [GuestNumber]"" Font=""Arial, 8.5pt"" HorzAlign=""Right""/>
-      <LineObject Name=""LineHeader"" Left=""0"" Top=""125"" Width=""287.28"" Style=""Dash""/>
+  <ReportPage Name=""Page1"" PaperWidth=""80"" PaperHeight=""297"" LeftMargin=""0"" TopMargin=""2"" RightMargin=""0"" BottomMargin=""2"" FirstPageSource=""1"" OtherPagesSource=""1"">
+    <ReportTitleBand Name=""ReportTitle1"" Width=""260"" Height=""130"">
+      <TextObject Name=""TxtTitle"" Left=""0"" Top=""5"" Width=""260"" Height=""26"" Text=""[RestaurantName]"" Font=""Arial, 13pt, style=Bold"" HorzAlign=""Center""/>
+      <LineObject Name=""LineTop"" Left=""0"" Top=""35"" Width=""260""/>
+      <TextObject Name=""TxtOrderID"" Left=""0"" Top=""40"" Width=""260"" Height=""16"" Text=""Çek №: [OrderID]"" Font=""Arial, 9.5pt, style=Bold""/>
+      <TextObject Name=""TxtDate"" Left=""0"" Top=""57"" Width=""260"" Height=""16"" Text=""Tarix: [ReceiptDate]"" Font=""Arial, 8.5pt""/>
+      <TextObject Name=""TxtWaiter"" Left=""0"" Top=""74"" Width=""260"" Height=""16"" Text=""Personal: [WaiterName]"" Font=""Arial, 8.5pt""/>
+      <TextObject Name=""TxtTable"" Left=""0"" Top=""91"" Width=""150"" Height=""16"" Text=""Masa №: [TableName]"" Font=""Arial, 9.5pt, style=Bold""/>
+      <TextObject Name=""TxtGuest"" Left=""150"" Top=""91"" Width=""110"" Height=""16"" Text=""Qonaq: [GuestNumber]"" Font=""Arial, 8.5pt"" HorzAlign=""Right""/>
+      <LineObject Name=""LineHeader"" Left=""0"" Top=""125"" Width=""260"" Style=""Dash""/>
     </ReportTitleBand>
-    <PageHeaderBand Name=""PageHeader1"" Top=""134"" Width=""287.28"" Height=""22"">
-      <TextObject Name=""TxtHeaderName"" Left=""0"" Top=""2"" Width=""135"" Height=""16"" Text=""Məhsul"" Font=""Arial, 8.5pt, style=Bold""/>
-      <TextObject Name=""TxtHeaderQty"" Left=""135"" Top=""2"" Width=""40"" Height=""16"" Text=""Miq."" Font=""Arial, 8.5pt, style=Bold"" HorzAlign=""Center""/>
-      <TextObject Name=""TxtHeaderPrice"" Left=""175"" Top=""2"" Width=""50"" Height=""16"" Text=""Qiy."" Font=""Arial, 8.5pt, style=Bold"" HorzAlign=""Right""/>
-      <TextObject Name=""TxtHeaderTotal"" Left=""225"" Top=""2"" Width=""62.28"" Height=""16"" Text=""Cəmi"" Font=""Arial, 8.5pt, style=Bold"" HorzAlign=""Right""/>
-      <LineObject Name=""LineCols"" Left=""0"" Top=""20"" Width=""287.28""/>
+    <PageHeaderBand Name=""PageHeader1"" Top=""134"" Width=""260"" Height=""22"">
+      <TextObject Name=""TxtHeaderName"" Left=""0"" Top=""2"" Width=""120"" Height=""16"" Text=""Məhsul"" Font=""Arial, 8.5pt, style=Bold""/>
+      <TextObject Name=""TxtHeaderQty"" Left=""120"" Top=""2"" Width=""35"" Height=""16"" Text=""Miq."" Font=""Arial, 8.5pt, style=Bold"" HorzAlign=""Center""/>
+      <TextObject Name=""TxtHeaderPrice"" Left=""155"" Top=""2"" Width=""45"" Height=""16"" Text=""Qiy."" Font=""Arial, 8.5pt, style=Bold"" HorzAlign=""Right""/>
+      <TextObject Name=""TxtHeaderTotal"" Left=""200"" Top=""2"" Width=""60"" Height=""16"" Text=""Cəmi"" Font=""Arial, 8.5pt, style=Bold"" HorzAlign=""Right""/>
+      <LineObject Name=""LineCols"" Left=""0"" Top=""20"" Width=""260""/>
     </PageHeaderBand>
-    <DataBand Name=""Data1"" Top=""160"" Width=""287.28"" Height=""20"" DataSource=""OrderTransactions"">
-      <TextObject Name=""TxtItemName"" Left=""0"" Top=""2"" Width=""135"" Height=""16"" Text=""[OrderTransactions.MenuItemText]"" Font=""Arial, 8.5pt""/>
-      <TextObject Name=""TxtQty"" Left=""135"" Top=""2"" Width=""40"" Height=""16"" Text=""[OrderTransactions.Quantity]"" Font=""Arial, 8.5pt"" HorzAlign=""Center"" Format=""Number"" Format.UseLocale=""false"" Format.DecimalDigits=""0""/>
-      <TextObject Name=""TxtPrice"" Left=""175"" Top=""2"" Width=""50"" Height=""16"" Text=""[OrderTransactions.MenuItemUnitPrice]"" Font=""Arial, 8.5pt"" HorzAlign=""Right"" Format=""Custom"" Format.Format=""0.00""/>
-      <TextObject Name=""TxtTotal"" Left=""225"" Top=""2"" Width=""62.28"" Height=""16"" Text=""[OrderTransactions.ExtendedPrice]"" Font=""Arial, 8.5pt"" HorzAlign=""Right"" Format=""Custom"" Format.Format=""0.00""/>
+    <DataBand Name=""Data1"" Top=""160"" Width=""260"" Height=""20"" DataSource=""OrderTransactions"">
+      <TextObject Name=""TxtItemName"" Left=""0"" Top=""2"" Width=""120"" Height=""16"" Text=""[OrderTransactions.MenuItemText]"" Font=""Arial, 8.5pt""/>
+      <TextObject Name=""TxtQty"" Left=""120"" Top=""2"" Width=""35"" Height=""16"" Text=""[OrderTransactions.Quantity]"" Font=""Arial, 8.5pt"" HorzAlign=""Center"" Format=""Number"" Format.UseLocale=""false"" Format.DecimalDigits=""0""/>
+      <TextObject Name=""TxtPrice"" Left=""155"" Top=""2"" Width=""45"" Height=""16"" Text=""[OrderTransactions.MenuItemUnitPrice]"" Font=""Arial, 8.5pt"" HorzAlign=""Right"" Format=""Custom"" Format.Format=""0.00""/>
+      <TextObject Name=""TxtTotal"" Left=""200"" Top=""2"" Width=""60"" Height=""16"" Text=""[OrderTransactions.ExtendedPrice]"" Font=""Arial, 8.5pt"" HorzAlign=""Right"" Format=""Custom"" Format.Format=""0.00""/>
     </DataBand>
-    <ReportSummaryBand Name=""ReportSummary1"" Top=""184"" Width=""287.28"" Height=""110"">
-      <LineObject Name=""LineSum"" Left=""0"" Top=""2"" Width=""287.28""/>
-      <TextObject Name=""TxtGrandTotal"" Left=""0"" Top=""10"" Width=""287.28"" Height=""24"" Text=""CƏMİ : [GrandTotal] AZN"" Font=""Arial, 12pt, style=Bold"" HorzAlign=""Center""/>
-      <LineObject Name=""LineBottom"" Left=""0"" Top=""38"" Width=""287.28"" Style=""Dash""/>
-      <TextObject Name=""TxtNotes"" Left=""0"" Top=""44"" Width=""287.28"" Height=""16"" Text=""[OrderNotes]"" Font=""Arial, 8pt, style=Italic"" HorzAlign=""Center""/>
-      <TextObject Name=""TxtThanks"" Left=""0"" Top=""62"" Width=""287.28"" Height=""20"" Text=""TƏŞƏKKÜR EDİRİK!"" Font=""Arial, 9.5pt, style=Bold"" HorzAlign=""Center""/>
-      <TextObject Name=""TxtPhone"" Left=""0"" Top=""84"" Width=""287.28"" Height=""16"" Text=""[PhoneInfo]"" Font=""Arial, 8pt, style=Italic"" HorzAlign=""Center""/>
+    <ReportSummaryBand Name=""ReportSummary1"" Top=""184"" Width=""260"" Height=""110"">
+      <LineObject Name=""LineSum"" Left=""0"" Top=""2"" Width=""260""/>
+      <TextObject Name=""TxtGrandTotal"" Left=""0"" Top=""10"" Width=""260"" Height=""24"" Text=""CƏMİ : [GrandTotal] AZN"" Font=""Arial, 12pt, style=Bold"" HorzAlign=""Center""/>
+      <LineObject Name=""LineBottom"" Left=""0"" Top=""38"" Width=""260"" Style=""Dash""/>
+      <TextObject Name=""TxtNotes"" Left=""0"" Top=""44"" Width=""260"" Height=""16"" Text=""[OrderNotes]"" Font=""Arial, 8pt, style=Italic"" HorzAlign=""Center""/>
+      <TextObject Name=""TxtThanks"" Left=""0"" Top=""62"" Width=""260"" Height=""20"" Text=""TƏŞƏKKÜR EDİRİK!"" Font=""Arial, 9.5pt, style=Bold"" HorzAlign=""Center""/>
+      <TextObject Name=""TxtPhone"" Left=""0"" Top=""84"" Width=""260"" Height=""16"" Text=""[PhoneInfo]"" Font=""Arial, 8pt, style=Italic"" HorzAlign=""Center""/>
     </ReportSummaryBand>
   </ReportPage>
 </Report>";
@@ -117,26 +122,26 @@ public class FastReportService
     <Parameter Name=""GuestNumber"" DataType=""System.Int32"" Expression=""2""/>
     <Parameter Name=""OrderNotes"" DataType=""System.String"" Expression=""&quot;&quot;""/>
   </Dictionary>
-  <ReportPage Name=""Page1"" PaperWidth=""80"" PaperHeight=""297"" LeftMargin=""2"" TopMargin=""2"" RightMargin=""2"" BottomMargin=""2"" FirstPageSource=""1"" OtherPagesSource=""1"">
-    <ReportTitleBand Name=""ReportTitle1"" Width=""287.28"" Height=""145"">
-      <TextObject Name=""TxtTitle"" Left=""0"" Top=""5"" Width=""287.28"" Height=""26"" Text=""[Title]"" Font=""Arial, 13pt, style=Bold"" HorzAlign=""Center""/>
-      <LineObject Name=""LineTop"" Left=""0"" Top=""33"" Width=""287.28""/>
-      <TextObject Name=""TxtOrderID"" Left=""0"" Top=""38"" Width=""287.28"" Height=""18"" Text=""ÇEK №: [OrderID]"" Font=""Arial, 10pt, style=Bold"" HorzAlign=""Center""/>
-      <TextObject Name=""TxtDate"" Left=""0"" Top=""58"" Width=""287.28"" Height=""16"" Text=""Tarix: [ReceiptDate]"" Font=""Arial, 9pt""/>
-      <TextObject Name=""TxtTime"" Left=""0"" Top=""75"" Width=""287.28"" Height=""16"" Text=""Sifariş Saatı: [ReceiptTime]"" Font=""Arial, 9pt""/>
-      <TextObject Name=""TxtWaiter"" Left=""0"" Top=""92"" Width=""287.28"" Height=""16"" Text=""Personal: [WaiterName]"" Font=""Arial, 9pt""/>
-      <TextObject Name=""TxtTable"" Left=""0"" Top=""110"" Width=""170"" Height=""18"" Text=""Masa: [TableName]"" Font=""Arial, 11pt, style=Bold""/>
-      <TextObject Name=""TxtGuest"" Left=""170"" Top=""110"" Width=""117.28"" Height=""18"" Text=""Qonaq: [GuestNumber]"" Font=""Arial, 9pt"" HorzAlign=""Right""/>
-      <LineObject Name=""LineHeader"" Left=""0"" Top=""140"" Width=""287.28"" Style=""Solid""/>
+  <ReportPage Name=""Page1"" PaperWidth=""80"" PaperHeight=""297"" LeftMargin=""0"" TopMargin=""2"" RightMargin=""0"" BottomMargin=""2"" FirstPageSource=""1"" OtherPagesSource=""1"">
+    <ReportTitleBand Name=""ReportTitle1"" Width=""245"" Height=""145"">
+      <TextObject Name=""TxtTitle"" Left=""0"" Top=""5"" Width=""245"" Height=""26"" Text=""[Title]"" Font=""Arial, 13pt, style=Bold"" HorzAlign=""Center""/>
+      <LineObject Name=""LineTop"" Left=""0"" Top=""33"" Width=""245""/>
+      <TextObject Name=""TxtOrderID"" Left=""0"" Top=""38"" Width=""245"" Height=""18"" Text=""ÇEK №: [OrderID]"" Font=""Arial, 10pt, style=Bold"" HorzAlign=""Center""/>
+      <TextObject Name=""TxtDate"" Left=""0"" Top=""58"" Width=""245"" Height=""16"" Text=""Tarix: [ReceiptDate]"" Font=""Arial, 9pt""/>
+      <TextObject Name=""TxtTime"" Left=""0"" Top=""75"" Width=""245"" Height=""16"" Text=""Sifariş Saatı: [ReceiptTime]"" Font=""Arial, 9pt""/>
+      <TextObject Name=""TxtWaiter"" Left=""0"" Top=""92"" Width=""245"" Height=""16"" Text=""Personal: [WaiterName]"" Font=""Arial, 9pt""/>
+      <TextObject Name=""TxtTable"" Left=""0"" Top=""110"" Width=""140"" Height=""18"" Text=""Masa: [TableName]"" Font=""Arial, 11pt, style=Bold""/>
+      <TextObject Name=""TxtGuest"" Left=""140"" Top=""110"" Width=""105"" Height=""18"" Text=""Qonaq: [GuestNumber]"" Font=""Arial, 9pt"" HorzAlign=""Right""/>
+      <LineObject Name=""LineHeader"" Left=""0"" Top=""140"" Width=""245"" Style=""Solid""/>
     </ReportTitleBand>
-    <DataBand Name=""Data1"" Top=""150"" Width=""287.28"" Height=""28"" DataSource=""OrderTransactions"">
-      <TextObject Name=""TxtQty"" Left=""0"" Top=""2"" Width=""35"" Height=""22"" Text=""[OrderTransactions.Quantity]"" Font=""Arial, 12pt, style=Bold"" HorzAlign=""Left"" Format=""Number"" Format.UseLocale=""false"" Format.DecimalDigits=""0""/>
-      <TextObject Name=""TxtItemName"" Left=""38"" Top=""2"" Width=""249.28"" Height=""22"" Text=""x  [OrderTransactions.MenuItemText]"" Font=""Arial, 11pt, style=Bold""/>
-      <LineObject Name=""LineItem"" Left=""0"" Top=""26"" Width=""287.28"" Style=""Dot""/>
+    <DataBand Name=""Data1"" Top=""150"" Width=""245"" Height=""28"" DataSource=""OrderTransactions"">
+      <TextObject Name=""TxtQty"" Left=""0"" Top=""2"" Width=""30"" Height=""22"" Text=""[OrderTransactions.Quantity]"" Font=""Arial, 12pt, style=Bold"" HorzAlign=""Left"" Format=""Number"" Format.UseLocale=""false"" Format.DecimalDigits=""0""/>
+      <TextObject Name=""TxtItemName"" Left=""32"" Top=""2"" Width=""213"" Height=""22"" Text=""x  [OrderTransactions.MenuItemText]"" Font=""Arial, 11pt, style=Bold""/>
+      <LineObject Name=""LineItem"" Left=""0"" Top=""26"" Width=""245"" Style=""Dot""/>
     </DataBand>
-    <ReportSummaryBand Name=""ReportSummary1"" Top=""185"" Width=""287.28"" Height=""50"">
-      <LineObject Name=""LineSum"" Left=""0"" Top=""5"" Width=""287.28""/>
-      <TextObject Name=""TxtPrintTime"" Left=""0"" Top=""15"" Width=""287.28"" Height=""24"" Text=""SAAT : [ReceiptTime]"" Font=""Arial, 12pt, style=Bold"" HorzAlign=""Center""/>
+    <ReportSummaryBand Name=""ReportSummary1"" Top=""185"" Width=""245"" Height=""50"">
+      <LineObject Name=""LineSum"" Left=""0"" Top=""5"" Width=""245""/>
+      <TextObject Name=""TxtPrintTime"" Left=""0"" Top=""15"" Width=""245"" Height=""24"" Text=""SAAT : [ReceiptTime]"" Font=""Arial, 12pt, style=Bold"" HorzAlign=""Center""/>
     </ReportSummaryBand>
   </ReportPage>
 </Report>";
@@ -387,45 +392,102 @@ public class FastReportService
                 return true;
             }
 
-            // For physical printer: send to printer via Edge headless
-            string edgePath = @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe";
-            if (!File.Exists(edgePath))
-            {
-                edgePath = @"C:\Program Files\Microsoft\Edge\Application\msedge.exe";
-            }
-
-            if (File.Exists(edgePath))
-            {
-                var psi = new ProcessStartInfo
-                {
-                    FileName = edgePath,
-                    Arguments = $"--headless --disable-gpu --print-to-printer --printer-name=\"{printerName}\" \"{pdfPath}\"",
-                    CreateNoWindow = true,
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    UseShellExecute = false
-                };
-                using var proc = Process.Start(psi);
-                proc?.WaitForExit(10000);
-                return true;
-            }
-
-            // Fallback to PrintTo shell verb
-            var printPsi = new ProcessStartInfo
-            {
-                FileName = pdfPath,
-                Verb = "PrintTo",
-                Arguments = $"\"{printerName}\"",
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                UseShellExecute = true
-            };
-            using var printProc = Process.Start(printPsi);
-            printProc?.WaitForExit(10000);
-            return true;
+            // Print directly to physical/thermal Windows printer via System.Drawing.Printing & PDFtoImage
+            return PrintPdfToPrinter(pdfPath, printerName, copies);
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"FastReport Print Error: {ex}");
+            return false;
+        }
+    }
+
+    public bool PrintPdfToPrinter(string pdfPath, string printerName, int copies = 1)
+    {
+        try
+        {
+            if (!File.Exists(pdfPath))
+            {
+                Debug.WriteLine($"PDF file does not exist: {pdfPath}");
+                return false;
+            }
+
+            // Find matching installed printer (case-insensitive)
+            string targetPrinter = printerName.Trim();
+            foreach (string installed in PrinterSettings.InstalledPrinters)
+            {
+                if (string.Equals(installed.Trim(), targetPrinter, StringComparison.OrdinalIgnoreCase))
+                {
+                    targetPrinter = installed;
+                    break;
+                }
+            }
+
+            // Render PDF pages to images using PDFtoImage / SkiaSharp
+            var bitmaps = new List<Bitmap>();
+            using (var pdfStream = File.OpenRead(pdfPath))
+            {
+                foreach (var skBitmap in Conversion.ToImages(pdfStream))
+                {
+                    using var ms = new MemoryStream();
+                    skBitmap.Encode(ms, SKEncodedImageFormat.Png, 100);
+                    ms.Position = 0;
+                    bitmaps.Add(new Bitmap(ms));
+                }
+            }
+
+            if (bitmaps.Count == 0)
+            {
+                Debug.WriteLine("No pages rendered from PDF.");
+                return false;
+            }
+
+            int pageIndex = 0;
+            using var printDoc = new PrintDocument();
+            printDoc.PrinterSettings.PrinterName = targetPrinter;
+            printDoc.PrinterSettings.Copies = (short)Math.Max(1, copies);
+            printDoc.PrintController = new StandardPrintController(); // Silent printing without UI popup
+            printDoc.DefaultPageSettings.Margins = new Margins(0, 0, 0, 0);
+
+            printDoc.PrintPage += (s, e) =>
+            {
+                if (pageIndex < bitmaps.Count && e.Graphics != null)
+                {
+                    var bmp = bitmaps[pageIndex];
+
+                    // Determine printable width
+                    int pageWidth = e.PageBounds.Width > 0 ? e.PageBounds.Width : 283; // 80mm ~ 283 (1/100 inch)
+                    int targetWidth = (int)(pageWidth * 0.88f); // 80mm roll has ~72mm physical thermal head (~88%)
+                    float scale = (float)targetWidth / bmp.Width;
+                    int targetHeight = (int)(bmp.Height * scale);
+
+                    e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    e.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+
+                    e.Graphics.DrawImage(bmp, 0, 0, targetWidth, targetHeight);
+
+                    pageIndex++;
+                    e.HasMorePages = pageIndex < bitmaps.Count;
+                }
+                else
+                {
+                    e.HasMorePages = false;
+                }
+            };
+
+            printDoc.Print();
+
+            foreach (var b in bitmaps)
+            {
+                b.Dispose();
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"PrintPdfToPrinter failed: {ex.Message}");
             return false;
         }
     }

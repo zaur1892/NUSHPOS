@@ -1,9 +1,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NUSHPOS.Helpers;
+using NUSHPOS.Models;
 using NUSHPOS.Services;
 using NUSHPOS.ViewModels.Base;
+using NUSHPOS.Views.Dialogs;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
 
@@ -16,6 +19,7 @@ public partial class MainScreenViewModel : ViewModelBase
     private readonly DatabaseService _databaseService;
     private readonly StationSettingsService _stationSettingsService;
     private readonly AuthorityService _authorityService;
+    private readonly CustomerService _customerService;
 
     [ObservableProperty]
     private string _employeeName = SessionManager.EmployeeName;
@@ -27,7 +31,14 @@ public partial class MainScreenViewModel : ViewModelBase
     private string _stationInfo = $"Terminal: {SessionManager.StationID}";
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanOpenCashRegister))]
+    [NotifyPropertyChangedFor(nameof(CanCloseCashRegister))]
+    [NotifyPropertyChangedFor(nameof(CashierSessionStatusText))]
     private bool _hasActiveSession;
+
+    public bool CanOpenCashRegister => !HasActiveSession;
+    public bool CanCloseCashRegister => HasActiveSession;
+    public string CashierSessionStatusText => HasActiveSession ? "KASSA AÇIQDIR" : "KASSA BAĞLIDIR";
 
     [ObservableProperty]
     private int _dailyOrderCount;
@@ -67,13 +78,15 @@ public partial class MainScreenViewModel : ViewModelBase
         RegisterSessionService registerSessionService, 
         DatabaseService databaseService,
         StationSettingsService stationSettingsService,
-        AuthorityService authorityService)
+        AuthorityService authorityService,
+        CustomerService customerService)
     {
         _navigationService = navigationService;
         _registerSessionService = registerSessionService;
         _databaseService = databaseService;
         _stationSettingsService = stationSettingsService;
         _authorityService = authorityService;
+        _customerService = customerService;
         Title = "Ana Ekran";
         StartClock();
         _ = CheckSessionAsync();
@@ -163,8 +176,60 @@ public partial class MainScreenViewModel : ViewModelBase
     [RelayCommand]
     private async Task OpenDelivery()
     {
-        if (!await _authorityService.ValidateActionAccessAsync("saleOrderDelivery", "ÇATDIRILMA SATIŞI")) return;
-        _navigationService.NavigateTo<SaleScreenViewModel>(new { OrderType = 2, TableId = 0 });
+        if (!await _authorityService.ValidateActionAccessAsync("saleOrderDelivery", "PAKET SATIŞI")) return;
+        await StartTakeawayOrDeliveryFlowAsync(5);
+    }
+
+    private async Task StartTakeawayOrDeliveryFlowAsync(int orderType)
+    {
+        var phoneDialog = new PhoneEntryDialog();
+        if (phoneDialog.ShowDialog() != true) return;
+
+        string phone = phoneDialog.PhoneNumber.Trim();
+        if (string.IsNullOrWhiteSpace(phone)) return;
+
+        var matchingCustomers = await _customerService.SearchCustomersByPhoneAsync(phone);
+
+        Customer? targetCustomer = null;
+        if (matchingCustomers.Count > 1)
+        {
+            var selDialog = new CustomerSelectionDialog(phone, matchingCustomers);
+            if (selDialog.ShowDialog() != true) return;
+            targetCustomer = selDialog.SelectedCustomer;
+        }
+        else if (matchingCustomers.Count == 1)
+        {
+            targetCustomer = matchingCustomers[0];
+        }
+        else
+        {
+            targetCustomer = new Customer
+            {
+                DisplayPhoneNumber = phone,
+                PhoneNumber = phone,
+                CustomerIsActive = true,
+                BranchID = SessionManager.BranchID > 0 ? SessionManager.BranchID : 1
+            };
+        }
+
+        if (targetCustomer == null) return;
+
+        var cardDialog = new CustomerCardDialog(_customerService, targetCustomer, phone);
+        if (cardDialog.ShowDialog() != true) return;
+
+        var finalCustomer = cardDialog.CurrentCustomer;
+
+        _navigationService.NavigateTo<SaleScreenViewModel>(new
+        {
+            OrderType = orderType, // 5 = Paket Satışı
+            TableId = 0,
+            Customer = finalCustomer,
+            CustomerID = finalCustomer.CustomerID,
+            CustomerKey = finalCustomer.CustomerKey,
+            CustomerName = finalCustomer.CustomerName,
+            OrderPhone = phone,
+            AddressNotes = finalCustomer.FullAddressDisplay
+        });
     }
 
     [RelayCommand]
@@ -186,17 +251,39 @@ public partial class MainScreenViewModel : ViewModelBase
     {
         if (!await _authorityService.ValidateActionAccessAsync("employeeRegisterIn", "KASSİR SESSİYASINI AÇMAQ")) return;
 
-        var session = new Models.RegisterSession
+        // Cari stansiya üzrə açıq sessiyanın yoxlanılması
+        var openCount = await _registerSessionService.CheckStationOpenSessionAsync(SessionManager.StationID);
+        if (openCount > 0)
         {
-            EmployeeID = SessionManager.EmployeeID,
-            StationID = SessionManager.StationID,
-            BranchID = SessionManager.BranchID,
-            SignInDateTime = DateTime.Now,
-            RegisterStartAmount = 0
-        };
-        var sessionId = await _registerSessionService.OpenSessionAsync(session);
-        SessionManager.RegisterSessionID = sessionId;
-        HasActiveSession = true;
+            PosMessageDialog.ShowInfo("BU TERMİNALDA ARTIQ AKTİV KASSİR SESSİYASI MÖVCUDDUR!", "MƏLUMAT BİLDİRİŞİ", 15);
+            HasActiveSession = true;
+            return;
+        }
+
+        var dialog = new Views.Dialogs.CashierInDialog();
+        if (dialog.ShowDialog() == true)
+        {
+            decimal startAmount = dialog.ResultAmount;
+            try
+            {
+                var sessionId = await _registerSessionService.OpenCashierSessionAsync(
+                    branchId: SessionManager.BranchID > 0 ? SessionManager.BranchID : 1,
+                    stationId: SessionManager.StationID > 0 ? SessionManager.StationID : 1,
+                    employeeId: SessionManager.EmployeeID,
+                    employeeKey: SessionManager.EmployeeKey,
+                    startAmount: startAmount,
+                    accessCode: ""
+                );
+
+                SessionManager.RegisterSessionID = sessionId;
+                HasActiveSession = true;
+                PosMessageDialog.ShowSuccess($"Kassir sessiyası uğurla açıldı.\nAçılış məbləği: {startAmount:N2} ₼", "UĞURLU ƏMƏLİYYAT", 10);
+            }
+            catch (Exception ex)
+            {
+                PosMessageDialog.ShowError($"Sessiya açılarkən xəta baş verdi:\n{ex.Message}", "XƏTA BİLDİRİŞİ", 15);
+            }
+        }
     }
 
     [RelayCommand]
@@ -204,9 +291,25 @@ public partial class MainScreenViewModel : ViewModelBase
     {
         if (!await _authorityService.ValidateActionAccessAsync("employeeRegisterOut", "KASSİR SESSİYASINI BAĞLAMAQ")) return;
 
-        if (SessionManager.RegisterSessionID.HasValue)
+        // 1. Açıq sifarişlərin yoxlanması: Açıq çek varsa sistem çıxışa icazə vermir!
+        var openCount = await _registerSessionService.GetOpenOrdersCountAsync();
+        if (openCount > 0)
         {
-            await _registerSessionService.CloseSessionAsync(SessionManager.RegisterSessionID.Value, 0);
+            PosMessageDialog.ShowWarning(
+                $"SİSTEM TƏNZİMLƏMƏLƏRİNİZƏ ƏSASƏN AÇIQ ÇEK VARKƏN KASSİR ÇIXIŞINA İCAZƏ VERİLMİR",
+                "XƏBƏRDARLIQ BİLDİRİŞİ",
+                20,
+                $"Sistemdə hələ də {openCount} ədəd ödənilməmiş açıq sifariş (masa) mövcuddur.\nKassadan çıxış etmək üçün əvvəlcə bütün açıq sifarişləri bağlayın.");
+            return;
+        }
+
+        var fastReportService = (FastReportService)App.Services.GetService(typeof(FastReportService))!;
+        var vm = new CashierOutDialogViewModel(_registerSessionService, fastReportService);
+        await vm.InitializeAsync();
+
+        var dialog = new Views.Dialogs.CashierOutDialog(vm);
+        if (dialog.ShowDialog() == true)
+        {
             SessionManager.RegisterSessionID = null;
             HasActiveSession = false;
         }

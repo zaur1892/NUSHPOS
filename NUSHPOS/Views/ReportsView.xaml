@@ -187,10 +187,10 @@
                                     <Button Content="▶" Margin="2,0"/>
                                     <Button Content="UYGULA" Command="{Binding ApplyCommand}" Margin="10,0,2,0" Padding="15,5" Background="#E6EAF0" BorderBrush="#B9C7D4"/>
                                     <Button Content="EXCEL" Command="{Binding ExportToExcelCommand}" Margin="10,0,2,0" Padding="15,5" Background="#4CAF50" Foreground="White" BorderBrush="#388E3C" Visibility="{Binding IsHtmlReport, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
-                                    <Button Content="🖨" Margin="10,0,2,0" Padding="5"/>
-                                    <Button Content="🖨" Margin="2,0" Padding="5"/>
-                                    <Button Content="❓" Margin="2,0" Padding="5"/>
-                                    <Button Content="📐" Margin="2,0" Padding="5"/>
+                                    <Button Content="🖨" Command="{Binding PrintPosReportCommand}" ToolTip="Hesabatı POS Printerindən Çıxar" Margin="10,0,2,0" Padding="8,5" Background="#E6EAF0" BorderBrush="#B9C7D4"/>
+                                    <Button Content="🖨" Command="{Binding PrintA4ReportCommand}" ToolTip="Hesabatı A4 Printerindən Çıxar" Margin="2,0" Padding="8,5" Background="#E6EAF0" BorderBrush="#B9C7D4"/>
+                                    <Button Content="❓" Command="{Binding PrintPromptPrinterCommand}" ToolTip="Hansı printerdən çıxarım? (Printer Seç)" Margin="2,0" Padding="8,5" Background="#E6EAF0" BorderBrush="#B9C7D4"/>
+                                    <Button Content="📐" Command="{Binding DataContext.EditReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" ToolTip="Dizayn Redaktoru" Margin="2,0" Padding="8,5" Background="#E6EAF0" BorderBrush="#B9C7D4"/>
                                 </StackPanel>
                             </Border>
 

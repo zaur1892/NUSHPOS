@@ -191,7 +191,7 @@ public class MenuService
     {
         using var connection = _db.CreateConnection();
         const string sql = @"
-            SELECT m.AutoID, m.MenuItemID, m.MenuItemText, m.MenuCategoryID, m.MenuGroupID, m.DisplayIndex, m.DefaultUnitPrice, m.MenuItemCost, m.MenuItemDescription, m.TaxPercent, m.PictureName, m.ButtonColor, m.Barcode, m.DineInPrice, m.TakeOutPrice, m.DeliveryPrice, CAST(m.MenuItemKey AS NVARCHAR(100)) AS MenuItemKey, CAST(m.MenuCategoryKey AS NVARCHAR(100)) AS MenuCategoryKey, CAST(m.MenuGroupKey AS NVARCHAR(100)) AS MenuGroupKey, m.BranchID, mg.MenuGroupText AS MenuItemGroupText, mc.MenuCategoryText AS MenumItemCategoryText
+            SELECT m.AutoID, m.MenuItemID, m.MenuItemText, m.MenuCategoryID, m.MenuGroupID, m.DisplayIndex, m.DefaultUnitPrice, m.MenuItemCost, m.MenuItemDescription, m.TaxPercent, m.PictureName, m.ButtonColor, m.Barcode, m.DineInPrice, m.TakeOutPrice, m.DeliveryPrice, m.UsedPrinterID1, m.UsedPrinterID2, m.UsedPrinterID3, m.UsedPrinterID4, m.UsedPrinterID5, CAST(m.MenuItemKey AS NVARCHAR(100)) AS MenuItemKey, CAST(m.MenuCategoryKey AS NVARCHAR(100)) AS MenuCategoryKey, CAST(m.MenuGroupKey AS NVARCHAR(100)) AS MenuGroupKey, m.BranchID, mg.MenuGroupText AS MenuItemGroupText, mc.MenuCategoryText AS MenumItemCategoryText
             FROM MenuItems m
             INNER JOIN MenuItemLayout l ON m.MenuItemID = l.MenuItemID
             LEFT JOIN MenuGroups mg ON l.MenuGroupID = mg.MenuGroupID

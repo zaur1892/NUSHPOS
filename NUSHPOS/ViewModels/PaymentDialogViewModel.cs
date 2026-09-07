@@ -135,6 +135,7 @@ public partial class PaymentDialogViewModel : ViewModelBase
                 OrderID = _order.OrderID,
                 OrderKey = _order.OrderKey,
                 StationID = SessionManager.StationID,
+                RegisterSessionID = SessionManager.RegisterSessionID,
                 PaymentDateTime = DateTime.Now,
                 EmployeeID = SessionManager.EmployeeID,
                 PaymentMethodID = _paymentMethod.PaymentMethodID,

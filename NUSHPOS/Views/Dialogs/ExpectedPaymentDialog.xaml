@@ -1,0 +1,125 @@
+<Window x:Class="NUSHPOS.Views.Dialogs.ExpectedPaymentDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Gözlənilən Ödəmə Növü"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Width="960" Height="540">
+
+    <Border Background="#F8FAFC" BorderBrush="#0284C7" BorderThickness="2" CornerRadius="12">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" Opacity="0.25" BlurRadius="18" ShadowDepth="5"/>
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>  <!-- Header -->
+                <RowDefinition Height="Auto"/>  <!-- Banner -->
+                <RowDefinition Height="*"/>   <!-- Payment methods grid -->
+                <RowDefinition Height="70"/>  <!-- Bottom Action: İMTİNA -->
+            </Grid.RowDefinitions>
+
+            <!-- Top Header -->
+            <Border Grid.Row="0" Background="#0F172A" CornerRadius="10,10,0,0" Padding="16,0">
+                <Grid VerticalAlignment="Center">
+                    <TextBlock Text="ÖDƏNİŞ ÜSULUNUN TƏYİNİ" FontSize="14" FontWeight="Bold" Foreground="#F8FAFC"/>
+                    <Button Content="✕" Width="28" Height="28" HorizontalAlignment="Right" Background="Transparent" Foreground="#F87171" FontWeight="Bold" FontSize="18" BorderThickness="0" Click="BtnCancel_Click" Cursor="Hand"/>
+                </Grid>
+            </Border>
+
+            <!-- Indigo/Slate Title Banner -->
+            <Border Grid.Row="1" Background="#4338CA" Margin="12,10,12,6" Padding="16,10" CornerRadius="8">
+                <TextBlock Text="GÖZLƏNİLƏN ÖDƏMƏ NÖVÜNÜ SEÇİN" 
+                           Foreground="#FFFFFF" 
+                           FontSize="17" 
+                           FontWeight="Bold" 
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Center"/>
+            </Border>
+
+            <!-- Payment Methods Grid -->
+            <ScrollViewer Grid.Row="2" Margin="12,6" VerticalScrollBarVisibility="Auto">
+                <ItemsControl x:Name="icPaymentMethods">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="5"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Margin="4" 
+                                    MinHeight="75"
+                                    Background="#FFFFFF" 
+                                    BorderBrush="#CBD5E1" 
+                                    BorderThickness="1.5" 
+                                    Click="BtnPaymentSelect_Click"
+                                    Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" 
+                                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                                CornerRadius="8" 
+                                                x:Name="bd">
+                                            <Border.Effect>
+                                                <DropShadowEffect Color="Black" Opacity="0.06" BlurRadius="5" ShadowDepth="2"/>
+                                            </Border.Effect>
+                                            <TextBlock Text="{Binding PaymentName}" 
+                                                       FontSize="17" 
+                                                       FontWeight="Black" 
+                                                       Foreground="#0F172A" 
+                                                       TextWrapping="Wrap" 
+                                                       TextAlignment="Center" 
+                                                       HorizontalAlignment="Center" 
+                                                       VerticalAlignment="Center" 
+                                                       Margin="6"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="#E0F2FE"/>
+                                                <Setter TargetName="bd" Property="BorderBrush" Value="#0284C7"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="#BAE6FD"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- Bottom Actions -->
+            <Border Grid.Row="3" Background="#E2E8F0" CornerRadius="0,0,10,10" Padding="16,10">
+                <Button Content="İMTİNA" 
+                        Width="140" 
+                        Height="46" 
+                        HorizontalAlignment="Left" 
+                        Background="#EF4444" 
+                        Foreground="White" 
+                        FontSize="18" 
+                        FontWeight="Black" 
+                        BorderThickness="0" 
+                        Click="BtnCancel_Click"
+                        Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="8" x:Name="bd">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="Opacity" Value="0.88"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

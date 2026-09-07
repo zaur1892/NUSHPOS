@@ -50,6 +50,9 @@
                                 </Setter>
                                 <Setter TargetName="border" Property="Opacity" Value="0.8"/>
                             </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.35"/>
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -221,7 +224,10 @@
                     </Button>
 
                     <!-- KASSA GİRİŞ -->
-                    <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource GreenGradient}" Command="{Binding OpenCashRegisterInCommand}">
+                    <Button Style="{StaticResource SolidGradientButtonStyle}" 
+                            Background="{StaticResource GreenGradient}" 
+                            Command="{Binding OpenCashRegisterInCommand}"
+                            IsEnabled="{Binding CanOpenCashRegister}">
                         <StackPanel>
                             <Grid Height="55" Width="55" Margin="0,0,0,10">
                                 <TextBlock Text="🟢" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -231,7 +237,10 @@
                     </Button>
 
                     <!-- KASSA ÇIXIŞ -->
-                    <Button Style="{StaticResource SolidGradientButtonStyle}" Background="{StaticResource RedGradient}" Command="{Binding CloseCashRegisterCommand}">
+                    <Button Style="{StaticResource SolidGradientButtonStyle}" 
+                            Background="{StaticResource RedGradient}" 
+                            Command="{Binding CloseCashRegisterCommand}"
+                            IsEnabled="{Binding CanCloseCashRegister}">
                         <StackPanel>
                             <Grid Height="55" Width="55" Margin="0,0,0,10">
                                 <TextBlock Text="🔴" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -393,6 +402,10 @@
                 </Grid.ColumnDefinitions>
                 
                 <TextBlock Grid.Column="0" Text="{Binding CurrentDateTime, FallbackValue='16.08.2026 22:40'}" Foreground="#94A3B8" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                
+                <Border Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#0F172A" CornerRadius="6" Padding="12,4" BorderBrush="#334155" BorderThickness="1">
+                    <TextBlock Text="{Binding CashierSessionStatusText}" Foreground="#38BDF8" FontSize="13" FontWeight="Bold"/>
+                </Border>
                 
                 <TextBlock Grid.Column="2" Text="{Binding EmployeeName, StringFormat='KASSİR : \{0\}', FallbackValue='KASSİR : NUSHPOS'}" Foreground="#E2E8F0" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" Margin="20,0"/>
                 <TextBlock Grid.Column="3" Text="{Binding StationInfo, StringFormat='TERMİNAL : \{0\}', FallbackValue='TERMİNAL : 1'}" Foreground="#E2E8F0" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>

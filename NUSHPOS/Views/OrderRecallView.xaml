@@ -31,18 +31,28 @@
                     <MouseBinding Gesture="LeftDoubleClick" Command="{Binding OpenCheckCommand}" />
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ÇEK NO" Binding="{Binding DisplayCheckNo}" Width="1.5*"/>
-                    <DataGridTextColumn Header="Tarix" Binding="{Binding OrderDateTime, StringFormat=dd-MM-yyyy HH:mm:ss}" Width="2*"/>
-                    <DataGridTextColumn Header="İŞÇİ" Binding="{Binding EmployeeName}" Width="2*"/>
-                    <DataGridTextColumn Header="MƏBLƏĞ" Binding="{Binding GrandTotal, StringFormat=N2}" Width="1.5*">
+                    <DataGridTextColumn Header="ÇEK NO" Binding="{Binding DisplayCheckNo}" Width="1.3*"/>
+                    <DataGridTextColumn Header="SATIŞ TİPİ" Binding="{Binding SaleTypeDisplay}" Width="2.2*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Foreground" Value="#005B96"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="TARİX" Binding="{Binding OrderDateTime, StringFormat=dd-MM-yyyy HH:mm:ss}" Width="1.8*"/>
+                    <DataGridTextColumn Header="İŞÇİ" Binding="{Binding EmployeeName}" Width="1.5*"/>
+                    <DataGridTextColumn Header="MƏBLƏĞ" Binding="{Binding GrandTotal, StringFormat='{}{0:N2} ₼'}" Width="1.4*">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Right"/>
                                 <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="INFO" Binding="{Binding InfoText}" Width="2*"/>
+                    <DataGridTextColumn Header="STATUS / ÖDƏNİŞ" Binding="{Binding InfoText}" Width="2*"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
