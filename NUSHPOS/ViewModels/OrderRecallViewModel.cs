@@ -338,7 +338,8 @@ namespace NUSHPOS.ViewModels
                     CustomerName = SelectedOrder.CustomerName ?? "",
                     OrderPhone = SelectedOrder.OrderPhone ?? "",
                     BarTabName = SelectedOrder.BarTabName ?? "",
-                    TableName = SelectedOrder.DineInTableName ?? ""
+                    TableName = SelectedOrder.DineInTableName ?? "",
+                    FromOrderRecall = true
                 });
             }
         }

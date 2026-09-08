@@ -46,6 +46,7 @@ public partial class SaleScreenViewModel : ViewModelBase
     [ObservableProperty] private string _addressNotes = "";
     [ObservableProperty] private string _barTabName = "";
     [ObservableProperty] private Customer? _customer;
+    [ObservableProperty] private bool _fromOrderRecall;
 
     // Menu
     [ObservableProperty] private ObservableCollection<MenuGroup> _menuGroups = new();
@@ -160,6 +161,10 @@ public partial class SaleScreenViewModel : ViewModelBase
         var barTabProp = type.GetProperty("BarTabName");
         if (barTabProp != null && string.IsNullOrEmpty(BarTabName))
             BarTabName = barTabProp.GetValue(parameter) as string ?? "";
+
+        var fromRecallProp = type.GetProperty("FromOrderRecall");
+        if (fromRecallProp != null)
+            FromOrderRecall = (bool)fromRecallProp.GetValue(parameter)!;
 
         OrderTypeName = OrderType switch { 1 => "MASA", 2 => "BAR", 3 => "AL GÖTÜR", 4 => "TƏZGAH", 5 => "PAKET SATIŞ", _ => "SATIŞ" };
         
@@ -1067,7 +1072,11 @@ public partial class SaleScreenViewModel : ViewModelBase
     [RelayCommand]
     private void GoBack()
     {
-        if (OrderType == 1)
+        if (FromOrderRecall)
+        {
+            _navigationService.NavigateTo<OrderRecallViewModel>();
+        }
+        else if (OrderType == 1)
         {
             _navigationService.NavigateTo<TablePlanViewModel>();
         }
@@ -1254,8 +1263,19 @@ public partial class SaleScreenViewModel : ViewModelBase
 
         if (vm.IsPaymentCompleted)
         {
-            // Payment completed successfully, order is closed. Go back to Table Plan.
-            _navigationService.NavigateTo<TablePlanViewModel>();
+            // Payment completed successfully, order is closed. Go back to OrderRecall or TablePlan.
+            if (FromOrderRecall)
+            {
+                _navigationService.NavigateTo<OrderRecallViewModel>();
+            }
+            else if (OrderType == 1)
+            {
+                _navigationService.NavigateTo<TablePlanViewModel>();
+            }
+            else
+            {
+                _navigationService.NavigateTo<MainScreenViewModel>();
+            }
         }
     }
 
