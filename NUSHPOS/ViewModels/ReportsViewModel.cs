@@ -582,19 +582,19 @@ public partial class ReportTabModel : ObservableObject
         if (queryName.Equals("INDIRIMLER", StringComparison.OrdinalIgnoreCase))
         {
             var sbInd = new System.Text.StringBuilder();
-            sbInd.AppendLine("<table class='report-table' style='width:100%'>");
-            sbInd.AppendLine($"<tr><td class='text-left'><b>Ümumi Satış:</b></td><td class='text-right'><b>{GrossSales:N2}</b></td></tr>");
-            sbInd.AppendLine($"<tr><td class='text-left'><b>Xalis Satış:</b></td><td class='text-right'><b>{NetSales:N2}</b></td></tr>");
+            sbInd.AppendLine("<table class='kv-table' style='width:100%'>");
+            sbInd.AppendLine($"<tr><td class='kv-label'>Ümumi Satış:</td><td class='kv-value'>{GrossSales:N2}</td></tr>");
+            sbInd.AppendLine($"<tr><td class='kv-label'>Xalis Satış:</td><td class='kv-value'>{NetSales:N2}</td></tr>");
             if (CheckDiscounts > 0)
-                sbInd.AppendLine($"<tr><td class='text-left'>Çek Endirimləri:</td><td class='text-right'>{CheckDiscounts:N2}</td></tr>");
+                sbInd.AppendLine($"<tr><td class='kv-label'>Çek Endirimləri:</td><td class='kv-value'>{CheckDiscounts:N2}</td></tr>");
             if (ItemDiscounts > 0)
-                sbInd.AppendLine($"<tr><td class='text-left'>Məhsul Endirimləri:</td><td class='text-right'>{ItemDiscounts:N2}</td></tr>");
+                sbInd.AppendLine($"<tr><td class='kv-label'>Məhsul Endirimləri:</td><td class='kv-value'>{ItemDiscounts:N2}</td></tr>");
             if (CashDiscounts > 0)
-                sbInd.AppendLine($"<tr><td class='text-left'>Nağd Endirimlər:</td><td class='text-right'>{CashDiscounts:N2}</td></tr>");
-            sbInd.AppendLine($"<tr><td class='text-left'>Çek Sayı:</td><td class='text-right'>{TotalCheckCount}</td></tr>");
-            sbInd.AppendLine($"<tr><td class='text-left'>Qonaq Sayı:</td><td class='text-right'>{TotalGuests}</td></tr>");
-            sbInd.AppendLine($"<tr><td class='text-left'>Adam Başı Orta:</td><td class='text-right'>{GuestAverage:N2}</td></tr>");
-            sbInd.AppendLine($"<tr><td class='text-left'>Orta Çek:</td><td class='text-right'>{CheckAverage:N2}</td></tr>");
+                sbInd.AppendLine($"<tr><td class='kv-label'>Nağd Endirimlər:</td><td class='kv-value'>{CashDiscounts:N2}</td></tr>");
+            sbInd.AppendLine($"<tr><td class='kv-label'>Çek Sayı:</td><td class='kv-value'>{TotalCheckCount}</td></tr>");
+            sbInd.AppendLine($"<tr><td class='kv-label'>Qonaq Sayı:</td><td class='kv-value'>{TotalGuests}</td></tr>");
+            sbInd.AppendLine($"<tr><td class='kv-label'>Adam Başı Orta:</td><td class='kv-value'>{GuestAverage:N2}</td></tr>");
+            sbInd.AppendLine($"<tr><td class='kv-label'>Orta Çek:</td><td class='kv-value'>{CheckAverage:N2}</td></tr>");
             sbInd.AppendLine("</table>");
             return sbInd.ToString();
         }
@@ -602,8 +602,8 @@ public partial class ReportTabModel : ObservableObject
         if (queryName.Equals("ServisBedeli", StringComparison.OrdinalIgnoreCase))
         {
             var sbSrv = new System.Text.StringBuilder();
-            sbSrv.AppendLine("<table class='report-table' style='width:100%'>");
-            sbSrv.AppendLine($"<tr><td class='text-left'>Xidmət Haqqı:</td><td class='text-right'>{ServiceFee:N2}</td></tr>");
+            sbSrv.AppendLine("<table class='kv-table' style='width:100%'>");
+            sbSrv.AppendLine($"<tr><td class='kv-label'>Xidmət Haqqı:</td><td class='kv-value'>{ServiceFee:N2}</td></tr>");
             sbSrv.AppendLine("</table>");
             return sbSrv.ToString();
         }

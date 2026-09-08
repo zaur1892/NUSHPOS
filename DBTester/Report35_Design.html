@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Xəzinədar Çıxış Hesabatı</title>
+    <style>
+        @page { 
+            size: 80mm auto; 
+            margin: 0; 
+        }
+        * {
+            box-sizing: border-box;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        body { 
+            background-color: #555; 
+            margin: 0; 
+            padding: 10px 0;
+            text-align: center; 
+            font-size: 11px; 
+            color: #000; 
+        }
+        .receipt-container { 
+            background-color: #fff; 
+            width: 72mm; 
+            margin: 0 auto; 
+            padding: 4mm 2mm; 
+            text-align: left; 
+            word-wrap: break-word;
+        }
+        @media print {
+            body { background-color: #fff; padding: 0; }
+            .receipt-container { width: 72mm; padding: 2mm 0; }
+        }
+
+        .report-header { 
+            text-align: center; 
+            font-weight: bold; 
+            font-size: 13px; 
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .time-header {
+            text-align: center;
+            font-size: 11px;
+            margin-bottom: 6px;
+        }
+        .section-title { 
+            font-weight: bold; 
+            text-align: center; 
+            text-transform: uppercase; 
+            border-top: 1px dashed #000;
+            border-bottom: 1px dashed #000; 
+            padding: 3px 0; 
+            margin-top: 8px; 
+            margin-bottom: 5px; 
+            font-size: 11px;
+        }
+        .section-note {
+            font-size: 9px;
+            text-align: center;
+            margin: 4px 0;
+            font-weight: bold;
+        }
+
+        /* Standart Cədvəllər */
+        table { 
+            width: 100% !important; 
+            border-collapse: collapse !important; 
+            margin-bottom: 4px !important; 
+        }
+        th { 
+            border-bottom: 1px dashed #000 !important; 
+            padding: 2px 1px !important; 
+            font-weight: bold !important; 
+            font-size: 10px !important;
+            text-align: left;
+        }
+        td { 
+            padding: 2px 1px !important; 
+            font-size: 10px !important; 
+        }
+
+        /* Endirimlər üçün Sətir-Sətir Cədvəl */
+        .kv-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin-bottom: 4px !important;
+        }
+        .kv-table td {
+            padding: 2px 0 !important;
+            font-size: 11px !important;
+            border-bottom: 1px dotted #ccc !important;
+        }
+        .kv-label {
+            font-weight: bold;
+            text-align: left;
+            width: 60%;
+        }
+        .kv-value {
+            text-align: right;
+            font-weight: normal;
+            width: 40%;
+        }
+
+        /* Ləğv Əməliyyatları Kart Dizaynı */
+        .iptal-card {
+            width: 100%;
+            border-bottom: 1px dashed #000;
+            padding: 4px 0;
+            margin-bottom: 2px;
+        }
+        .iptal-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 0 !important;
+        }
+        .iptal-table td {
+            padding: 1px 0 !important;
+            border: none !important;
+            font-size: 11px !important;
+        }
+        .col-id { width: 22%; text-align: left; font-weight: bold; }
+        .col-name { width: 56%; text-align: left; font-weight: bold; }
+        .col-qty { width: 22%; text-align: right; font-weight: bold; }
+        
+        .col-user { width: 50%; text-align: left; color: #333; }
+        .col-reason { width: 50%; text-align: right; color: #333; text-transform: uppercase; }
+
+        .divider {
+            border-bottom: 1px dashed #000;
+            margin: 6px 0;
+        }
+        .footer-space { 
+            height: 12mm; 
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <!-- ŞİRKƏT ADI VƏ BAŞLIQ -->
+        <div class="report-header">
+            {{ISLETMEBILGILERI}}
+            <br/>
+            ** GÜN SONU HESABATI **
+        </div>
+        
+        <div class="time-header">
+            {{CurrentTime}}
+        </div>
+
+        <!-- SATIŞ XÜLASƏSİ -->
+        <div class="report-block">
+            <div class="section-title">SATIŞ XÜLASƏSİ</div>
+            <div class="data-content" data-type="default">{{GRUPSATISLAR}}</div>
+        </div>
+
+        <!-- ENDİRİMLƏR VƏ STATİSTİKA -->
+        <div class="report-block">
+            <div class="section-title">ENDİRİMLƏR VƏ STATİSTİKA</div>
+            <div class="data-content" data-type="default">{{INDIRIMLER}}</div>
+        </div>
+
+        <!-- XİDMƏT HAQQI -->
+        <div class="report-block">
+            <div class="section-title">XİDMƏT HAQQI</div>
+            <div class="data-content" data-type="default">{{ServisBedeli}}</div>
+        </div>
+
+        <!-- SATIŞ PAYLANMASI -->
+        <div class="report-block">
+            <div class="section-title">SATIŞ PAYLANMASI</div>
+            <div class="data-content" data-type="default">{{SATISTIPLERI}}</div>
+        </div>
+
+        <!-- SATIŞ GƏLİRLƏRİ -->
+        <div class="report-block">
+            <div class="section-title">SATIŞ GƏLİRLƏRİ</div>
+            <div class="data-content" data-type="default">{{KAZANCBILGILERI}}</div>
+            <div class="section-note">
+                ** SATIŞ GƏLİRLƏRİ İLƏ CARİ DAXİLOLMALAR AYRI GÖSTƏRİLİR **
+            </div>
+        </div>
+
+        <!-- XALİS GƏLİR VƏZİYYƏTİ -->
+        <div class="report-block">
+            <div class="section-title">XALİS GƏLİR VƏZİYYƏTİ</div>
+            <div class="data-content" data-type="default">{{KAZANCDURUMUNET}}</div>
+        </div>
+
+        <!-- KASSA ÖDƏNİŞLƏRİ / MƏSRƏFLƏR -->
+        <div class="report-block">
+            <div class="section-title">KASSA ÖDƏNİŞLƏRİ / MƏSRƏFLƏR</div>
+            <div class="data-content" data-type="kv">{{KASAODEMELERI}}</div>
+        </div>
+
+        <!-- LƏĞV ƏMƏLİYYATLARI (ŞƏKİLDƏKİ KİMİ 2 SƏTİRLİ) -->
+        <div class="report-block">
+            <div class="section-title">LƏĞV ƏMƏLİYYATLARI</div>
+            <div class="data-content" data-type="iptal">{{IPTALLER}}</div>
+        </div>
+
+        <!-- CARİ HESAB ƏMƏLİYYATLARI -->
+        <div class="report-block">
+            <div class="section-title">CARİ HESAB ƏMƏLİYYATLARI</div>
+            <div class="data-content" data-type="kv">{{CARIHESAPHAREKETLERI}}</div>
+        </div>
+
+        <!-- AÇIQ ÇEKLƏR -->
+        <div class="report-block">
+            <div class="section-title">AÇIQ ÇEKLƏR</div>
+            <div class="data-content" data-type="default">{{ACIKCEKLERR}}</div>
+        </div>
+
+        <!-- QAYTARMALAR -->
+        <div class="report-block">
+            <div class="section-title">QAYTARMALAR (İADƏ)</div>
+            <div class="data-content" data-type="default">{{IADE}}</div>
+        </div>
+
+        <!-- İŞÇİ GİRİŞ-ÇIXIŞI -->
+        <div class="report-block">
+            <div class="section-title">İŞÇİ GİRİŞ-ÇIXIŞI</div>
+            <div class="data-content" data-type="default">{{GIRISCIKISBILGILERI}}</div>
+        </div>
+
+        <div class="footer-space"></div>
+    </div>
+
+    <!-- ES3 / IE COMPATIBLE SCRIPT (NO FOREACH, NO MODERN JS) -->
+    <script type="text/javascript">
+        var dict = {
+            "Column1": "Məbləğ",
+            "Grup": "Qrup",
+            "MƏBLƏĞ": "Məbləğ",
+            "MEBLEG": "Məbləğ",
+            "FAİZ": "Faiz",
+            "FAIZ": "Faiz",
+            "SAYSATIS NÖVÜ": "Satış Növü",
+            "SAYSATIS NOVU": "Satış Növü",
+            "SAY": "SAYI",
+            "ADI": "Müəssisə Adı",
+            "Brüt Satışlar": "Ümumi Satış",
+            "Ürün İndirimleri": "Məhsul Endirimi",
+            "Nakit İndirimler": "Nağd Endirim",
+            "Çek İndirimler": "Çek Endirimi",
+            "Toplam İndirimler": "Cəmi Endirim",
+            "Net Satışlar": "Xalis Satış",
+            "Toplam Çek Sayısı": "Çek Sayı",
+            "Toplam Konuk": "Qonaq Sayı",
+            "Kişi Başı Ortalama": "Adam Başı Orta",
+            "Çek Ortalama": "Orta Çek",
+            "ODEME YAPAN": "Ödəyən Şəxs",
+            "TARIH": "Tarix",
+            "KASA NO": "Kasa No",
+            "MASRAF ADI": "Xərc Adı",
+            "KASAMASRAF NOADI": "Xərc Adı/No",
+            "MƏBLƏĞ ACIKLAMA": "Qeyd",
+            "AVANS ALAN": "Avans Alan",
+            "GenelTOPLAM": "Məbləğ",
+            "GenelToplam": "Ümumi Məbləğ",
+            "PaymentMethodName": "Ödəniş Üsulu",
+            "Servis Bedeli": "Xidmət Haqqı",
+            "CekNo": "Çek No",
+            "MƏBLƏĞOdemeNovu": "Məbləğ / Növ",
+            "NAGD": "NAĞD",
+            "MASA SERVIS": "MASA XİDMƏTİ",
+            "MUTFAK": "MƏTBƏX"
+        };
+
+        function clean(str) {
+            if (!str) return '';
+            return str.replace(/^\s+|\s+$/g, '');
+        }
+
+        function trKey(key) {
+            var k = clean(key);
+            return dict[k] || k;
+        }
+
+        var divs = document.getElementsByTagName('div');
+        for (var i = 0; i < divs.length; i++) {
+            if (divs[i].className === 'report-block') {
+                var block = divs[i];
+                var content = null;
+                var innerDivs = block.getElementsByTagName('div');
+                for (var j = 0; j < innerDivs.length; j++) {
+                    if (innerDivs[j].className === 'data-content') {
+                        content = innerDivs[j];
+                        break;
+                    }
+                }
+                if (!content) continue;
+
+                var rawText = clean(content.innerText || content.textContent || '');
+                if (rawText === '' || rawText.indexOf('{{') === 0) {
+                    block.style.display = 'none';
+                    continue;
+                }
+
+                var tables = content.getElementsByTagName('table');
+                if (tables.length > 0) {
+                    var table = tables[0];
+                    var ths = table.getElementsByTagName('th');
+                    var trs = table.getElementsByTagName('tr');
+                    var headers = [];
+
+                    for (var h = 0; h < ths.length; h++) {
+                        headers.push(clean(ths[h].innerText || ths[h].textContent || ''));
+                    }
+
+                    var dataRows = [];
+                    for (var r = 0; r < trs.length; r++) {
+                        var tds = trs[r].getElementsByTagName('td');
+                        if (tds.length > 0) {
+                            var rowVals = [];
+                            var hasVal = false;
+                            for (var d = 0; d < tds.length; d++) {
+                                var val = clean(tds[d].innerText || tds[d].textContent || '');
+                                rowVals.push(val);
+                                if (val !== '' && val !== '&nbsp;') hasVal = true;
+                            }
+                            if (hasVal) dataRows.push(rowVals);
+                        }
+                    }
+
+                    if (dataRows.length === 0) {
+                        block.style.display = 'none';
+                        continue;
+                    }
+
+                    var dtype = content.getAttribute('data-type');
+
+                    // 1. LƏĞV ƏMƏLİYYATLARINI 2 SƏTİRLİ KART FORMATINA SAL
+                    if (dtype === 'iptal') {
+                        var iptalHtml = '';
+                        for (var x = 0; x < dataRows.length; x++) {
+                            var rData = dataRows[x];
+                            // OrderID, MenuItemText, Quantity, AddUserName, DeleteReason tapılması
+                            var orderId = rData[0] || '';
+                            var itemName = rData[2] || rData[1] || '';
+                            var qty = rData[3] || '1';
+                            var user = rData[5] || rData[4] || '';
+                            var reason = rData[6] || 'LƏĞV';
+
+                            iptalHtml += '<div class="iptal-card">' +
+                                '<table class="iptal-table">' +
+                                    '<tr>' +
+                                        '<td class="col-id">' + orderId + '</td>' +
+                                        '<td class="col-name">' + itemName + '</td>' +
+                                        '<td class="col-qty">x ' + qty + '</td>' +
+                                    '</tr>' +
+                                    '<tr>' +
+                                        '<td class="col-user" colspan="2">' + user + '</td>' +
+                                        '<td class="col-reason">' + reason + '</td>' +
+                                    '</tr>' +
+                                '</table>' +
+                            '</div>';
+                        }
+                        content.innerHTML = iptalHtml;
+                    }
+                    // 2. ÇOXSÜTUNLU ENDİRİM VƏ MƏSRƏFLƏRİ SƏTİR-SƏTİR ÇEVİR
+                    else if (dtype === 'kv' || headers.length > 4) {
+                        if (headers.length === 0) {
+                            // Table is already formatted row by row by server
+                            var kvHtml = '<table class="kv-table">';
+                            for (var k = 0; k < dataRows.length; k++) {
+                                var rowItem = dataRows[k];
+                                if (rowItem.length >= 2) {
+                                    var lbl = rowItem[0];
+                                    var val = rowItem[1];
+                                    kvHtml += '<tr><td class="kv-label">' + lbl + '</td><td class="kv-value">' + (dict[val] || val) + '</td></tr>';
+                                }
+                            }
+                            kvHtml += '</table>';
+                            content.innerHTML = kvHtml;
+                        } else {
+                            var kvHtml = '<table class="kv-table">';
+                            for (var k = 0; k < dataRows.length; k++) {
+                                var rowItem = dataRows[k];
+                                for (var m = 0; m < rowItem.length; m++) {
+                                    var cellV = rowItem[m];
+                                    var rawHead = headers[m] || '';
+                                    if (!rawHead) continue;
+                                    var headL = trKey(rawHead);
+                                    if (cellV !== '' && cellV !== '-' && cellV !== '0' && cellV !== '0,00' && cellV !== '0.00') {
+                                        if (headL.indexOf(':') === -1) headL += ':';
+                                        kvHtml += '<tr><td class="kv-label">' + headL + '</td><td class="kv-value">' + (dict[cellV] || cellV) + '</td></tr>';
+                                    }
+                                }
+                            }
+                            kvHtml += '</table>';
+                            content.innerHTML = kvHtml;
+                        }
+                    }
+                    // 3. STANDART CƏDVƏLLƏRİN BAŞLIQLARINI TƏRCÜMƏ ET
+                    else {
+                        for (var t = 0; t < ths.length; t++) {
+                            var thTxt = clean(ths[t].innerText || ths[t].textContent || '');
+                            if (dict[thTxt]) ths[t].innerText = dict[thTxt];
+                        }
+                        var allTds = table.getElementsByTagName('td');
+                        for (var y = 0; y < allTds.length; y++) {
+                            var tdTxt = clean(allTds[y].innerText || allTds[y].textContent || '');
+                            if (dict[tdTxt]) allTds[y].innerText = dict[tdTxt];
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

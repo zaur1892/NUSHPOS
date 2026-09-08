@@ -12,11 +12,10 @@ namespace DBTester
             string connectionString = "Server=TERMSRV;Database=infinia;Trusted_Connection=True;TrustServerCertificate=True;";
             using (var connection = new SqlConnection(connectionString))
             {
-                var designs = connection.Query("SELECT AutoID, DesignName, DocumentTypeID, IsDefault, LEN(CAST(DesignData AS NVARCHAR(MAX))) as DataLen FROM PrinterDesigns");
-                foreach (var d in designs)
-                {
-                    Console.WriteLine($"ID: {d.AutoID}, Name: {d.DesignName}, Type: {d.DocumentTypeID}, IsDefault: {d.IsDefault}, Len: {d.DataLen}");
-                }
+                string htmlContent = System.IO.File.ReadAllText(@"c:\Users\Zaur\source\repos\NUSHPOS\DBTester\Report35_Design.html");
+                byte[] bytes = System.Text.Encoding.UTF8.GetBytes(htmlContent);
+                int updated = connection.Execute("UPDATE ReportDesigns SET DesignData = @Data WHERE ReportID = 35", new { Data = bytes });
+                Console.WriteLine($"Updated Report 35 in database: {updated} row(s) affected.");
             }
         }
     }
